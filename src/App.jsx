@@ -19,6 +19,11 @@ function App() {
     })
   }, [])
 
+  const handleNavigate = (page) => {
+    setCurrentPage(page)
+    setSidebarOpen(false) // close sidebar on navigate
+  }
+
   return (
     <div className='relative min-h-screen flex flex-col'>
 
@@ -27,27 +32,33 @@ function App() {
         className='fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat'
         style={{ backgroundImage: `url(${img})` }}
       >
-        {/* Dark base so content stays readable */}
         <div className='absolute inset-0 bg-[#0d0718]/80' />
-        {/* Pink overlay */}
         <div className='absolute inset-0 bg-gradient-to-r from-pink-800/30 to-purple-800/30' />
       </div>
 
       <Header
         isOpen={sidebarOpen}
         onMenuClick={() => setSidebarOpen((open) => !open)}
+        onNavigate={handleNavigate}
+        currentPage={currentPage}
       />
+
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        onNavigate={(page) => setCurrentPage(page)}
+        onNavigate={handleNavigate}
+        currentPage={currentPage}
       />
 
       <main className='flex-grow'>
-        <Layout currentPage={currentPage} />
+        <Layout
+          currentPage={currentPage}
+          onNavigate={handleNavigate}
+        />
       </main>
 
-      <Footer />
+      <Footer onNavigate={handleNavigate} />
+
     </div>
   )
 }

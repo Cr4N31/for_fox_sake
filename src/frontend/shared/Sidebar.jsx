@@ -1,9 +1,6 @@
-import { useState } from 'react'
 import fox_img from '../../assets/imgs/fox-mascot-D5VOPyRA.jpg'
 
-function Sidebar({ isOpen, onClose, onNavigate }) {
-    const [active, setActive] = useState('HOME')
-
+function Sidebar({ isOpen, onClose, onNavigate, currentPage = 'HOME' }) {
     const links = [
         { id: '01', label: 'HOME' },
         { id: '02', label: 'ABOUT' },
@@ -47,7 +44,6 @@ function Sidebar({ isOpen, onClose, onNavigate }) {
                         <button
                             key={link.id}
                             onClick={() => {
-                                setActive(link.label)
                                 if (onNavigate) onNavigate(link.label)
                                 onClose()
                             }}
@@ -56,7 +52,7 @@ function Sidebar({ isOpen, onClose, onNavigate }) {
                             <span className='text-white/30 text-xs w-5'>{link.id}</span>
                             <span className={`font-extrabold text-5xl uppercase leading-tight
                                              transition-all duration-150
-                                             ${active === link.label 
+                                             ${currentPage === link.label 
                                                 ? 'bg-fire bg-clip-text text-transparent' 
                                                 : 'text-white/20 group-hover:text-white/50'}`}>
                                 {link.label}
