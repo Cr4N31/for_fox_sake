@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import AOS from 'aos'
 import img from './assets/imgs/bg-fox.jpeg'
 import Header from "./frontend/shared/Header"
 import Sidebar from "./frontend/shared/Sidebar"
@@ -8,6 +9,15 @@ import Footer from "./frontend/shared/Footer"
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState('HOME')
+
+  useEffect(() => {
+    AOS.init({
+      once: true,
+      duration: 700,
+      easing: 'ease-out-cubic',
+      anchorPlacement: 'top-bottom',
+    })
+  }, [])
 
   return (
     <div className='relative min-h-screen flex flex-col'>

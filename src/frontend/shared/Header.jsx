@@ -1,6 +1,6 @@
 function Header({ isOpen, onMenuClick }) {
     return (
-        <header className="fixed top-4 left-1/2 -translate-x-1/2 bg-white/30 p-2 my-4 rounded-xl border-2 border-purple-300/40 backdrop-blur-md w-[95%] max-w-6xl flex justify-between items-center z-50 shadow-[0_0_25px_rgba(168,85,247,0.2)]">
+        <header className="fixed top-4 left-1/2 -translate-x-1/2 bg-black/30 p-2 my-4 rounded-xl border-2 border-purple-300/40 backdrop-blur-md w-[95%] max-w-6xl flex justify-between items-center z-50 shadow-[0_0_25px_rgba(168,85,247,0.2)]">
 
             {/* LEFT */}
             <div className="flex gap-2 px-4 items-center">

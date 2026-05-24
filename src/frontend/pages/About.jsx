@@ -3,7 +3,7 @@ import LoreContent from '../components/about/LoreContent';
 
 function About(){
  return (
-    <div>
+    <div data-aos="fade-up">
         <LoreHero />
         <LoreContent />
     </div>

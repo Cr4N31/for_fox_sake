@@ -5,9 +5,15 @@ import Buy from "../components/home/Buy";
 function Home(){
     return(
         <>
-            <Hero/>
-            <Faq/>
-            <Buy/>
+            <section data-aos="fade-up">
+                <Hero/>
+            </section>
+            <section data-aos="fade-up">
+                <Faq/>
+            </section>
+            <section data-aos="fade-up">
+                <Buy/>
+            </section>
         </>
     )
 }

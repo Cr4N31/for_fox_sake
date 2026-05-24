@@ -35,11 +35,11 @@ function Treasury() {
     }
 
     return (
-        <section className='max-w-7xl mx-auto px-6 pb-24'>
+        <section className='max-w-7xl mx-auto px-6 pb-24' data-aos="fade-up">
             <TreasuryHero />
 
             <div className='grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]'>
-                <div className='space-y-6'>
+                <div className='space-y-6' data-aos="fade-up">
                     <BottleVisual
                         fillPercent={fillPercent}
                         treasury={treasury}
@@ -49,7 +49,7 @@ function Treasury() {
                     <StatsGrid holders={holders} totalSips={totalSips} />
                 </div>
 
-                <div className='space-y-6'>
+                <div className='space-y-6' data-aos="fade-up">
                     <LivePours pours={pours} />
                     <LastWinner winner={lastWinner.winner} amount={lastWinner.amount} />
                 </div>
