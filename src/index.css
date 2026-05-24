@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --background-image-fire: linear-gradient(135deg, oklch(78% .21 55), oklch(60% .3 15), oklch(65% .32 340));
+  --background-image-neon: linear-gradient(90deg, oklch(68% .32 340), oklch(78% .22 200));
+  --background-image-shimmer:  --background-image-shimmer: linear-gradient(90deg, #0000, color(xyz 0.298 0.519 0.895 / 0.4), #0000)
+}
+.shimmer {
+  background-image: linear-gradient(90deg, #fd008b, color(xyz 0.298 0.519 0.895 / 0.4), #ff00bfe7);
+  background-size: 200% 100%;
+  animation: shimmer 4s alternate infinite;
+}
+
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+

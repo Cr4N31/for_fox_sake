@@ -1,0 +1,60 @@
+function Footer() {
+
+    const footerNav = [
+        "About",
+        "Treasury",
+        "Dashboard",
+        "Community"
+    ]
+
+    return (
+        <footer className="relative bottom-0 left-0 right-0 z-50 border-t border-pink-400/20 bg-white/70 backdrop-blur-md shadow-[0_0_25px_rgba(168,85,247,0.2)]">
+
+            <section className="max-w-7xl mx-auto px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-5">
+
+                {/* BRANDING */}
+                <div className="flex flex-col gap-1 text-center md:text-left">
+
+                    <h1 className="bg-gradient-to-r from-pink-300 via-pink-400 to-white bg-clip-text text-transparent text-2xl font-black tracking-wide drop-shadow-[0_0_10px_rgba(244,114,182,0.7)]">
+                        For Fox Sake
+                    </h1>
+
+                    <p className="text-sm text-black/45 max-w-sm leading-relaxed">
+                        A neon fox tavern in the Cronos underworld. Sip. Stake. Win.
+                    </p>
+                </div>
+
+                {/* NAVIGATION */}
+                <nav>
+                    <ul className="flex flex-wrap justify-center gap-6 uppercase">
+
+                        {footerNav.map((f, index) => (
+                            <li
+                                key={index}
+                                className="text-black/60 tracking-[2px] text-xs hover:text-pink-300 transition duration-300 cursor-pointer hover:drop-shadow-[0_0_8px_rgba(244,114,182,0.9)]"
+                            >
+                                {f}
+                            </li>
+                        ))}
+
+                    </ul>
+                </nav>
+
+                {/* COPYRIGHT */}
+                <div className="text-center md:text-right">
+                    <p className="text-xs tracking-wide text-black/40">
+                        $FFS · Built on Cronos
+                    </p>
+
+                    <p className="text-xs text-pink-300/70 mt-1">
+                        © {new Date().getFullYear()} For Fox Sake
+                    </p>
+                </div>
+
+            </section>
+
+        </footer>
+    )
+}
+
+export default Footer
