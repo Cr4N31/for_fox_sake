@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import fox_img from '../../assets/imgs/fox-mascot-D5VOPyRA.jpg'
 
-function Sidebar({ isOpen, onClose }) {
+function Sidebar({ isOpen, onClose, onNavigate }) {
     const [active, setActive] = useState('HOME')
 
     const links = [
@@ -17,13 +17,13 @@ function Sidebar({ isOpen, onClose }) {
             {/* Backdrop */}
             {isOpen && (
                 <div 
-                    className='fixed inset-0 bg-black/50 z-30'
+                    className='fixed inset-0 bg-black/50 z-50'
                     onClick={onClose}
                 />
             )}
 
             {/* Sidebar panel */}
-            <div className={`fixed inset-0 h-full w-full z-40 
+            <div className={`fixed inset-0 h-full w-full z-60 
                             bg-[#0d0718]
                             transition-transform duration-300 ease-in-out
                             ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -39,7 +39,7 @@ function Sidebar({ isOpen, onClose }) {
                 </div>
 
                 {/* Nav links */}
-                <nav className='relative z-10 flex flex-col px-8 pt-12 gap-1'>
+                <nav className='relative top-20 z-10 flex flex-col px-8 pt-12 gap-1'>
                     <p className='text-cyan-300 text-xs tracking-[0.3em] uppercase mb-6'>
                         — Enter the Tavern
                     </p>
@@ -48,6 +48,7 @@ function Sidebar({ isOpen, onClose }) {
                             key={link.id}
                             onClick={() => {
                                 setActive(link.label)
+                                if (onNavigate) onNavigate(link.label)
                                 onClose()
                             }}
                             className='flex items-baseline gap-4 group text-left w-fit'
@@ -77,3 +78,4 @@ function Sidebar({ isOpen, onClose }) {
 }
 
 export default Sidebar
+

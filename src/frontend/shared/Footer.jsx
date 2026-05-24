@@ -8,7 +8,7 @@ function Footer() {
     ]
 
     return (
-        <footer className="relative bottom-0 left-0 right-0 z-50 border-t border-pink-400/20 bg-white/70 backdrop-blur-md shadow-[0_0_25px_rgba(168,85,247,0.2)]">
+        <footer className="relative bottom-0 left-0 right-0 z-50 mt-12 border-t border-pink-400/20 bg-black/10 backdrop-blur-md shadow-[0_0_25px_rgba(168,85,247,0.2)]">
 
             <section className="max-w-7xl mx-auto px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-5">
 
@@ -19,7 +19,7 @@ function Footer() {
                         For Fox Sake
                     </h1>
 
-                    <p className="text-sm text-black/45 max-w-sm leading-relaxed">
+                    <p className="text-sm text-white/45 max-w-sm leading-relaxed">
                         A neon fox tavern in the Cronos underworld. Sip. Stake. Win.
                     </p>
                 </div>
@@ -31,7 +31,7 @@ function Footer() {
                         {footerNav.map((f, index) => (
                             <li
                                 key={index}
-                                className="text-black/60 tracking-[2px] text-xs hover:text-pink-300 transition duration-300 cursor-pointer hover:drop-shadow-[0_0_8px_rgba(244,114,182,0.9)]"
+                                className="text-white/60 tracking-[2px] text-xs hover:text-pink-300 transition duration-300 cursor-pointer hover:drop-shadow-[0_0_8px_rgba(244,114,182,0.9)]"
                             >
                                 {f}
                             </li>
@@ -42,7 +42,7 @@ function Footer() {
 
                 {/* COPYRIGHT */}
                 <div className="text-center md:text-right">
-                    <p className="text-xs tracking-wide text-black/40">
+                    <p className="text-xs tracking-wide text-white/40">
                         $FFS · Built on Cronos
                     </p>
 

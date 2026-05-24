@@ -61,7 +61,7 @@ function Hero(){
                         </li>
                     ))}
                 </ul>
-                <span className='text-center tracking-widest font-light text-white/70'>── Awaiting first pour. Bottle is empty. ──</span>
+                <span className='mb-6 tracking-widest font-light text-white/70'>── Awaiting first pour. Bottle is empty. ──</span>
             </div>
             <div
                 className="relative rounded-2xl overflow-hidden border border-orange-500/30 bg-[#1a0a2e]"
