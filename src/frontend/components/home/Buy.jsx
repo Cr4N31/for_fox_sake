@@ -1,7 +1,33 @@
 import right_img from '../../../assets/imgs/fox-mascot-D5VOPyRA.jpg'
 import { Trophy } from "lucide-react"
+import { useAccount, useWriteContract } from 'wagmi'
+import { waitForTransactionReceipt } from '@wagmi/core'
+import { FFS_BOTTLE_ABI, FFS_BOTTLE_ADDRESS } from '../../../constants/contracts'
+import { useState } from 'react'
 
 function Buy(){
+  const { address } = useAccount()
+  const { writeContractAsync, isPending } = useWriteContract()
+  const [txStatus, setTxStatus] = useState('')
+
+  const handlePour = async () => {
+    if (!address) {
+      alert('Please connect your wallet first')
+      return
+    }
+    try {
+      setTxStatus('Approving and pouring...')
+      const hash = await writeContractAsync({
+        address: FFS_BOTTLE_ADDRESS,
+        abi: FFS_BOTTLE_ABI,
+        functionName: 'pour',
+        account: address,
+      })
+      setTxStatus('Transaction sent! Hash: ' + hash.slice(0, 10) + '...')
+    } catch (error) {
+      setTxStatus('Error: ' + (error?.message || 'Unknown error'))
+    }
+  }
     return(
         <section className='flex flex-col md:flex-row justify-between items-center
                             mx-4 md:mx-16 rounded-2xl border border-white/10 
@@ -18,13 +44,18 @@ function Buy(){
                     <p className='text-white/60 text-sm'>
                         No sips yet — be the first to pour and start the round.
                     </p>
-                    <button className='w-fit mt-2 px-6 py-3 rounded-xl font-bold 
+                    <button 
+                      onClick={handlePour}
+                      disabled={isPending}
+                      className='w-fit mt-2 px-6 py-3 rounded-xl font-bold 
                                        uppercase tracking-widest text-white text-sm
                                        bg-pink-500 shimmer
                                        transition-all duration-300
-                                       hover:shadow-[0_0_20px_6px_rgba(236,72,153,0.6)]'>
-                        Pour Your Sake &rarr;
+                                       hover:shadow-[0_0_20px_6px_rgba(236,72,153,0.6)]
+                                       disabled:opacity-50 disabled:cursor-not-allowed'>
+                        {isPending ? 'Pouring...' : 'Pour Your Sake →'}
                     </button>
+                    {txStatus && <p className='text-xs text-yellow-300 mt-2'>{txStatus}</p>}
                 </div>
             </div>
 

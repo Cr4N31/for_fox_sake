@@ -1,6 +1,6 @@
 import fox_img from '../../../assets/imgs/fox-hero-D8H5Gfnq.jpg'
 
-function LastWinner({ winner = null, amount = 0 }) {
+function LastWinner({ winner = null, amount = 0, winners = [] }) {
     return (
         <div className='rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-5'>
             <p className='text-white/70 text-xs tracking-widest uppercase font-semibold mb-4'>
@@ -31,6 +31,18 @@ function LastWinner({ winner = null, amount = 0 }) {
                     )}
                 </div>
             </div>
+            {winners.length > 0 && (
+                <ul className='mt-4 flex flex-col gap-2 border-t border-white/10 pt-4'>
+                    {winners.slice(0, 5).map((entry, i) => (
+                        <li key={entry.transactionHash || i} className='flex items-center justify-between text-xs'>
+                            <span className='text-white/45 font-mono'>{entry.shortWinner}</span>
+                            <span className='text-pink-300 font-semibold'>
+                                {Number(entry.winnerAmount).toLocaleString()} $FFS
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     )
 }

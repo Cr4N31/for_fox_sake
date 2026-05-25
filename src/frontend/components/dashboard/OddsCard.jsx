@@ -1,12 +1,8 @@
 export function OddsCard({ totalSips = 0 }) {
-    // Mock data: wins are 10% of sips, rewards are random based on sips
-    const wins = Math.floor(totalSips * 0.1)
-    const rewards = totalSips > 0 ? Math.floor(Math.random() * totalSips * 1000) : 0
-
     const stats = [
         { label: "Pours", value: totalSips, color: "text-white" },
-        { label: "Wins", value: wins, color: "text-cyan-400" },
-        { label: "Rewards", value: `$${rewards.toLocaleString()}`, color: "text-orange-400" },
+        { label: "Sips", value: totalSips, color: "text-cyan-400" },
+        { label: "Round", value: totalSips > 0 ? "Live" : "Open", color: "text-orange-400" },
     ]
 
     return (

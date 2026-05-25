@@ -2,11 +2,11 @@ import WalletBar from "../components/dashboard/WalletBar"
 import HoldingChart from "../components/dashboard/HoldingChart"
 import TreasureOddGrid from "../components/dashboard/TreasuryOddGrid"
 
-function Dashboard({ onNavigate, balance = 0, fillPercent = 0, participants = 0, totalSips = 0, mockTokenHoldings = [], onPour }){
+function Dashboard({ balance = 0, fillPercent = 0, participants = 0, totalSips = 0, mockTokenHoldings = [], onPour, isPouring = false }){
 	return (
 		<section className="p-8" data-aos="fade-up">
 			<WalletBar />
-			<HoldingChart mockTokenHoldings={mockTokenHoldings} />
+			<HoldingChart balance={balance} mockTokenHoldings={mockTokenHoldings} />
 			<TreasureOddGrid
 				balance={balance}
 				fillPercent={fillPercent}
@@ -14,6 +14,7 @@ function Dashboard({ onNavigate, balance = 0, fillPercent = 0, participants = 0,
 				totalSips={totalSips}
 				mockTokenHoldings={mockTokenHoldings}
 				onPour={onPour}
+				isPouring={isPouring}
 			/>
 		</section>
 	)

@@ -26,9 +26,11 @@ function LivePours({ pours = [] }) {
             ) : (
                 <ul className='flex flex-col gap-2'>
                     {pours.map((pour, i) => (
-                        <li key={i} className='flex items-center justify-between text-sm'>
+                        <li key={pour.transactionHash || i} className='flex items-center justify-between gap-3 text-sm'>
                             <span className='text-white/60 font-mono'>{pour.address}</span>
-                            <span className='text-cyan-300 font-semibold'>{pour.amount} $FFS</span>
+                            <span className={`font-semibold ${pour.type === 'sip' ? 'text-pink-300' : 'text-cyan-300'}`}>
+                                {pour.type === 'sip' ? 'Sip' : 'Pour'} {Number(pour.amount).toLocaleString()} $FFS
+                            </span>
                         </li>
                     ))}
                 </ul>

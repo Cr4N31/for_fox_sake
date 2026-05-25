@@ -1,6 +1,6 @@
 import TreasuryBottleCard from "./TreasuryBottleCard"
 import OddsCard from "./OddsCard"
-function TreasureOddGrid({ balance = 0, fillPercent = 0, participants = 0, totalSips = 0, mockTokenHoldings = [], onPour }){
+function TreasureOddGrid({ balance = 0, fillPercent = 0, participants = 0, totalSips = 0, onPour, isPouring = false }){
     return (
         <section className="flex mt-4 gap-2">
             <TreasuryBottleCard
@@ -8,6 +8,7 @@ function TreasureOddGrid({ balance = 0, fillPercent = 0, participants = 0, total
                 fillPercent={fillPercent}
                 participants={participants}
                 onPour={onPour}
+                isPouring={isPouring}
             />
             <OddsCard totalSips={totalSips} />
         </section>

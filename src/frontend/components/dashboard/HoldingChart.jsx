@@ -1,17 +1,17 @@
 import { useState } from "react"
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
 
-const generateData = (hours) => {
+const generateData = (hours, balance) => {
     const points = hours === "1H" ? 12 : hours === "6H" ? 24 : hours === "24H" ? 48 : 90
     return Array.from({ length: points }, (_, i) => ({
         time: i,
-        value: Math.max(0, Math.random() * 200 - 100 + (i * 0.5)),
+        value: Math.max(0, balance + i * 10),
     }))
 }
 
 const ranges = ["1H", "6H", "24H", "7D"]
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-[#2a0a3e] border border-purple-700/50 rounded-lg px-3 py-2 text-xs">
@@ -25,7 +25,6 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 function HoldingChart({ balance = 0, usdValue = 0.00, mockTokenHoldings = [] }) {
     const [activeRange, setActiveRange] = useState("24H")
-    const [data] = useState(() => generateData("24H"))
     
     // Use mock holdings if provided, otherwise use default balance display
     const displayHoldings = mockTokenHoldings.length > 0 ? mockTokenHoldings : []
@@ -33,12 +32,12 @@ function HoldingChart({ balance = 0, usdValue = 0.00, mockTokenHoldings = [] }) 
 
     // Generate line chart data from holdings
     const chartData = displayHoldings.length > 0 
-      ? displayHoldings.map((holding, idx) => ({
+      ? displayHoldings.map((holding) => ({
           name: holding.name,
           value: holding.amount,
           percentage: holding.percentage
         }))
-      : data
+      : generateData(activeRange, balance)
 
     return (
         <div className="flex flex-col gap-3 bg-[#1a0a2e]/80 border border-purple-800/50 rounded-2xl p-5 backdrop-blur-sm w-full">

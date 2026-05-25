@@ -1,5 +1,6 @@
 import { Trophy, GlassWater } from 'lucide-react'
-function BottleVisual({ fillPercent = 0, treasury = 0, participants = 0, onPour = () => {} }) {
+
+function BottleVisual({ fillPercent = 0, treasury = 0, participants = 0, onPour = () => {}, sipNonce = 0, isPouring = false }) {
     // Bottle body goes from y=65 to y=200, total height=135
     const bodyBottom = 200
     const bodyHeight = 135
@@ -9,7 +10,10 @@ function BottleVisual({ fillPercent = 0, treasury = 0, participants = 0, onPour 
     return (
         <div className='flex flex-col items-center justify-center p-8 gap-4'>
 
-            <div className='relative w-48 h-80'>
+            <div
+                key={sipNonce}
+                className={`relative w-48 h-80 transition-transform duration-500 ${sipNonce > 0 ? 'sip-burst' : ''}`}
+            >
                 <svg viewBox='0 0 120 220' className='w-full h-full' xmlns='http://www.w3.org/2000/svg'>
                     <defs>
                         {/* Clip to bottle body only — excludes neck */}
@@ -119,7 +123,7 @@ function BottleVisual({ fillPercent = 0, treasury = 0, participants = 0, onPour 
                                    transition-all duration-300
                                    hover:shadow-[0_0_20px_6px_rgba(236,72,153,0.6)]'>
                     <GlassWater className='w-4 h-4' />
-                    Pour 1,000 $FFS
+                    {isPouring ? 'Pouring...' : 'Pour 1,000 $FFS'}
                 </button>
                 <button className='flex items-center gap-2 px-5 py-3 rounded-xl
                                    border border-white/20 bg-white/5 text-white/70

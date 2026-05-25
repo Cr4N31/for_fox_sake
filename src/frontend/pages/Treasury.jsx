@@ -4,7 +4,7 @@ import LivePours from '../components/treasury/LivePours'
 import StatsGrid from '../components/treasury/StatsGrid'
 import LastWinner from '../components/treasury/LastWinner'
 
-function Treasury({ treasury = 0, holders = 0, totalSips = 0, participants = 0, pours = [], lastWinner = { winner: '', amount: 0 }, fillPercent = 0, onPour }) {
+function Treasury({ treasury = 0, holders = 0, totalSips = 0, participants = 0, pours = [], lastWinner = { winner: '', amount: 0 }, winnerHistory = [], fillPercent = 0, onPour, sipNonce = 0, isPouring = false }) {
     return (
         <section className='max-w-7xl mx-auto px-6 pb-24' data-aos="fade-up">
             <TreasuryHero />
@@ -16,13 +16,15 @@ function Treasury({ treasury = 0, holders = 0, totalSips = 0, participants = 0, 
                         treasury={treasury}
                         participants={participants}
                         onPour={onPour}
+                        sipNonce={sipNonce}
+                        isPouring={isPouring}
                     />
                     <StatsGrid holders={holders} totalSips={totalSips} />
                 </div>
 
                 <div className='space-y-6' data-aos="fade-up">
                     <LivePours pours={pours} />
-                    <LastWinner winner={lastWinner.winner} amount={lastWinner.amount} />
+                    <LastWinner winner={lastWinner.winner} amount={lastWinner.amount} winners={winnerHistory} />
                 </div>
             </div>
         </section>
