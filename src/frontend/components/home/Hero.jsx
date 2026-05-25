@@ -1,11 +1,11 @@
 import left_img from '../../../assets/imgs/fox-hero-D8H5Gfnq.jpg'
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react'
 
-function Hero({ onNavigate }) {
+function Hero({ onNavigate, holders = 0, treasury = 0, totalSips = 0 }) {
     const tokenData = [
-        { name: "Holders", value: 0, color: "#ffffff" },
-        { name: "Treasury", value: `$${0}`, color: "#00FFFF" },
-        { name: "Sips", value: 0, color: '#f87e0c' }
+        { name: "Holders", value: holders, color: "#ffffff" },
+        { name: "Treasury", value: `$${treasury.toLocaleString()}`, color: "#00FFFF" },
+        { name: "Sips", value: totalSips, color: '#f87e0c' }
     ]
 
     const { open } = useAppKit()

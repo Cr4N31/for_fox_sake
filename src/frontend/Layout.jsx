@@ -4,13 +4,27 @@ import Treasury from "./pages/Treasury"
 import Dashboard from "./pages/Dashboard"
 import Community from "./pages/Community"
 
-function Layout({ currentPage = 'HOME', onNavigate }) {
+function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips, participants, pours, lastWinner, fillPercent, onPour, mockTokenHoldings }) {
   return (
     <>
-      {currentPage === 'HOME'      && <Home      onNavigate={onNavigate} />}
+      {currentPage === 'HOME'      && <Home      onNavigate={onNavigate} holders={holders} treasury={treasury} totalSips={totalSips} />}
       {currentPage === 'ABOUT'     && <About     onNavigate={onNavigate} />}
-      {currentPage === 'TREASURY'  && <Treasury  onNavigate={onNavigate} />}
-      {currentPage === 'DASHBOARD' && <Dashboard onNavigate={onNavigate} />}
+      {currentPage === 'TREASURY'  && <Treasury  onNavigate={onNavigate}
+                                                treasury={treasury}
+                                                holders={holders}
+                                                totalSips={totalSips}
+                                                participants={participants}
+                                                pours={pours}
+                                                lastWinner={lastWinner}
+                                                fillPercent={fillPercent}
+                                                onPour={onPour} />}
+      {currentPage === 'DASHBOARD' && <Dashboard onNavigate={onNavigate}
+                                                balance={treasury}
+                                                fillPercent={fillPercent}
+                                                participants={participants}
+                                                totalSips={totalSips}
+                                                mockTokenHoldings={mockTokenHoldings}
+                                                onPour={onPour} />}
       {currentPage === 'COMMUNITY' && <Community onNavigate={onNavigate} />}
     </>
   )

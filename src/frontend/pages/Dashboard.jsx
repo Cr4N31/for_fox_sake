@@ -1,8 +1,20 @@
-function Dashboard(){
+import WalletBar from "../components/dashboard/WalletBar"
+import HoldingChart from "../components/dashboard/HoldingChart"
+import TreasureOddGrid from "../components/dashboard/TreasuryOddGrid"
+
+function Dashboard({ onNavigate, balance = 0, fillPercent = 0, participants = 0, totalSips = 0, mockTokenHoldings = [], onPour }){
 	return (
 		<section className="p-8" data-aos="fade-up">
-			<h1 className="text-3xl font-bold">Dashboard</h1>
-			<p className="text-sm text-white/60">This page is under construction.</p>
+			<WalletBar />
+			<HoldingChart mockTokenHoldings={mockTokenHoldings} />
+			<TreasureOddGrid
+				balance={balance}
+				fillPercent={fillPercent}
+				participants={participants}
+				totalSips={totalSips}
+				mockTokenHoldings={mockTokenHoldings}
+				onPour={onPour}
+			/>
 		</section>
 	)
 }
