@@ -118,10 +118,11 @@ function BottleVisual({ fillPercent = 0, treasury = 0, participants = 0, onPour 
                 <button
                     type='button'
                     onClick={onPour}
+                    disabled={isPouring}
                     className='flex items-center gap-2 px-5 py-3 rounded-xl
                                    bg-pink-500 shimmer text-white text-sm font-bold uppercase tracking-wide
                                    transition-all duration-300
-                                   hover:shadow-[0_0_20px_6px_rgba(236,72,153,0.6)]'>
+                                   hover:shadow-[0_0_20px_6px_rgba(236,72,153,0.6)] disabled:cursor-not-allowed disabled:opacity-50'>
                     <GlassWater className='w-4 h-4' />
                     {isPouring ? 'Pouring...' : 'Pour 1,000 $FFS'}
                 </button>

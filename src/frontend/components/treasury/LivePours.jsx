@@ -1,6 +1,20 @@
 import fox_img from '../../../assets/imgs/fox-hero-D8H5Gfnq.jpg'
 
+const formatTimeAgo = (timestamp) => {
+    if (!timestamp) return 'just now'
+
+    const date = new Date(timestamp)
+    if (Number.isNaN(date.getTime())) return 'just now'
+
+    const diffMs = Date.now() - date.getTime()
+    if (diffMs < 60000) return 'just now'
+    if (diffMs < 3600000) return `${Math.round(diffMs / 60000)} min${Math.round(diffMs / 60000) === 1 ? '' : 's'} ago`
+    if (diffMs < 86400000) return `${Math.round(diffMs / 3600000)} hr${Math.round(diffMs / 3600000) === 1 ? '' : 's'} ago`
+    return `${Math.round(diffMs / 86400000)} day${Math.round(diffMs / 86400000) === 1 ? '' : 's'} ago`
+}
+
 function LivePours({ pours = [] }) {
+    console.log('LivePours received:', pours) 
     return (
         <div className='rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 flex flex-col gap-3'>
 
@@ -24,13 +38,24 @@ function LivePours({ pours = [] }) {
                     </p>
                 </div>
             ) : (
-                <ul className='flex flex-col gap-2'>
+                <ul className='flex flex-col gap-3'>
                     {pours.map((pour, i) => (
-                        <li key={pour.transactionHash || i} className='flex items-center justify-between gap-3 text-sm'>
-                            <span className='text-white/60 font-mono'>{pour.address}</span>
-                            <span className={`font-semibold ${pour.type === 'sip' ? 'text-pink-300' : 'text-cyan-300'}`}>
-                                {pour.type === 'sip' ? 'Sip' : 'Pour'} {Number(pour.amount).toLocaleString()} $FFS
-                            </span>
+                        <li key={pour.transactionHash || i} className='rounded-2xl border border-white/10 bg-black/20 p-3'>
+                            <div className='flex items-center justify-between gap-2 text-xs text-white/50'>
+                                <span>{pour.round != null ? `Round ${pour.round}` : 'Round ?'}</span>
+                                <span>{formatTimeAgo(pour.timestamp)}</span>
+                            </div>
+                            <div className='mt-2 flex items-center justify-between gap-4'>
+                                <div>
+                                    <p className='text-white/80 font-mono'>{pour.address}</p>
+                                    <p className='text-white/50 uppercase tracking-[0.18em] text-[10px]'>
+                                        {pour.type === 'sip' ? 'Bottle Sip' : 'Pour'}
+                                    </p>
+                                </div>
+                                <div className={`text-right font-semibold ${pour.type === 'sip' ? 'text-pink-300' : 'text-cyan-300'}`}>
+                                    {Number(pour.amount).toLocaleString()} $FFS
+                                </div>
+                            </div>
                         </li>
                     ))}
                 </ul>

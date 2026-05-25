@@ -7,7 +7,7 @@ import Community from "./pages/Community"
 function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips, participants, pours, lastWinner, winnerHistory, fillPercent, onPour, mockTokenHoldings, sipNonce, isPouring }) {
   return (
     <>
-      {currentPage === 'HOME'      && <Home      onNavigate={onNavigate} holders={holders} treasury={treasury} totalSips={totalSips} />}
+      {currentPage === 'HOME'      && <Home      onNavigate={onNavigate} holders={holders} treasury={treasury} totalSips={totalSips} onPour={onPour} isPouring={isPouring} />}
       {currentPage === 'ABOUT'     && <About     onNavigate={onNavigate} />}
       {currentPage === 'TREASURY'  && <Treasury  onNavigate={onNavigate}
                                                 treasury={treasury}

@@ -1,98 +1,133 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from 'react'
 import AOS from 'aos'
 import img from './assets/imgs/bg-fox.jpeg'
-import Header from "./frontend/shared/Header"
-import Sidebar from "./frontend/shared/Sidebar"
-import Layout from "./frontend/Layout"
-import Footer from "./frontend/shared/Footer"
-import { waitForTransactionReceipt } from '@wagmi/core'
-import { formatUnits } from 'viem'
-import { useAccount, useConfig, useReadContract, useWatchContractEvent, useWriteContract } from 'wagmi'
-import {
-  FFS_BOTTLE_ABI,
-  FFS_BOTTLE_ADDRESS,
-  FFS_TOKEN_ABI,
-  FFS_TOKEN_ADDRESS,
-  isContractConfigured,
-} from './constants/contracts'
+import Header from './frontend/shared/Header'
+import Sidebar from './frontend/shared/Sidebar'
+import Layout from './frontend/Layout'
+import Footer from './frontend/shared/Footer'
+import { useBottle } from './frontend/hooks/useBottle'
 
-const formatAddress = (address = '') =>
-  address ? `${address.slice(0, 6)}...${address.slice(-4)}` : ''
-
-const formatTokenAmount = (value = 0n) => Number(formatUnits(value, 18))
 const apiBaseUrl = import.meta.env.VITE_FFS_API_URL || 'http://localhost:8787'
 
 function App() {
-  const config = useConfig()
-  const { address } = useAccount()
-  const { writeContractAsync, isPending } = useWriteContract()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState('HOME')
   const [pours, setPours] = useState([])
   const [winnerHistory, setWinnerHistory] = useState([])
   const [lastWinner, setLastWinner] = useState({ winner: '', amount: 0 })
-  const [sipNonce, setSipNonce] = useState(0)
-  const [indexedStats, setIndexedStats] = useState(null)
-
-  const readQuery = { enabled: isContractConfigured }
-
-  const { data: bottleBalance = 0n, refetch: refetchBottleBalance } = useReadContract({
-    address: FFS_BOTTLE_ADDRESS,
-    abi: FFS_BOTTLE_ABI,
-    functionName: 'bottleBalance',
-    query: readQuery,
+  const [stats, setStats] = useState({
+    total_rounds: 0,
+    total_ffs_distributed: 0,
+    total_pours: 0,
+    total_participants: 0,
   })
 
-  const { data: participants = 0n, refetch: refetchParticipants } = useReadContract({
-    address: FFS_BOTTLE_ADDRESS,
-    abi: FFS_BOTTLE_ABI,
-    functionName: 'roundPours',
-    query: readQuery,
-  })
-
-  const { data: fillPercent = 0n, refetch: refetchFillPercent } = useReadContract({
-    address: FFS_BOTTLE_ADDRESS,
-    abi: FFS_BOTTLE_ABI,
-    functionName: 'fillPercent',
-    query: readQuery,
-  })
-
-  const { data: totalSips = 0n, refetch: refetchTotalSips } = useReadContract({
-    address: FFS_BOTTLE_ADDRESS,
-    abi: FFS_BOTTLE_ABI,
-    functionName: 'totalSips',
-    query: readQuery,
-  })
-
-  const { data: pourAmount = 1000n * 10n ** 18n } = useReadContract({
-    address: FFS_BOTTLE_ADDRESS,
-    abi: FFS_BOTTLE_ABI,
-    functionName: 'POUR_AMOUNT',
-    query: readQuery,
-  })
-
-  const { data: allowance = 0n, refetch: refetchAllowance } = useReadContract({
-    address: FFS_TOKEN_ADDRESS,
-    abi: FFS_TOKEN_ABI,
-    functionName: 'allowance',
-    args: address ? [address, FFS_BOTTLE_ADDRESS] : undefined,
-    query: { enabled: isContractConfigured && Boolean(address) },
-  })
-
-  const refreshBottleReads = async () => {
-    await Promise.all([
-      refetchBottleBalance(),
-      refetchParticipants(),
-      refetchFillPercent(),
-      refetchTotalSips(),
-      refetchAllowance(),
-    ])
+  const fetchActivity = async () => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/activity`)
+      if (!response.ok) throw new Error('Unable to load activity')
+      const activity = await response.json()
+      setPours(
+        Array.isArray(activity)
+          ? activity.slice(0, 50).map((item) => ({
+              type: item.type,
+              address: item.wallet_address
+                ? `${item.wallet_address.slice(0, 6)}...${item.wallet_address.slice(-4)}`
+                : 'unknown',
+              amount: Number(item.amount),
+              transactionHash: item.transaction_hash,
+              round: item.round_number,
+              timestamp: item.timestamp,
+            }))
+          : [],
+      )
+    } catch (error) {
+      console.error('Fetch activity failed:', error)
+      setPours([])
+    }
   }
 
-  const treasury = useMemo(() => formatTokenAmount(bottleBalance), [bottleBalance])
-  const liveParticipants = Number(participants)
-  const liveTotalSips = indexedStats?.totalSips ?? Number(totalSips)
-  const liveFillPercent = Number(fillPercent)
+  const fetchWinners = async () => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/winners`)
+      if (!response.ok) throw new Error('Unable to load winners')
+      const data = await response.json()
+      const winners = Array.isArray(data)
+        ? data.map((row) => ({
+            ...row,
+            shortWinner: row.winner_address
+              ? `${row.winner_address.slice(0, 6)}...${row.winner_address.slice(-4)}`
+              : '',
+            winnerAmount: Number(row.amount_won),
+            treasuryAmount: Number(row.treasury_amount),
+          }))
+        : []
+      setWinnerHistory(winners)
+      if (winners.length > 0) {
+        setLastWinner({
+          winner: winners[0].shortWinner,
+          amount: winners[0].winnerAmount,
+        })
+      }
+    } catch (error) {
+      console.error('Fetch winners failed:', error)
+      setWinnerHistory([])
+    }
+  }
+
+  const fetchStats = async () => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/stats`)
+      if (!response.ok) throw new Error('Unable to load stats')
+      const data = await response.json()
+      setStats({
+        total_rounds: Number(data.total_rounds ?? 0),
+        total_ffs_distributed: Number(data.total_ffs_distributed ?? 0),
+        total_pours: Number(data.total_pours ?? 0),
+        total_participants: Number(data.total_participants ?? 0),
+      })
+    } catch (error) {
+      console.error('Fetch stats failed:', error)
+      setStats({
+        total_rounds: 0,
+        total_ffs_distributed: 0,
+        total_pours: 0,
+        total_participants: 0,
+      })
+    }
+  }
+
+  const {
+    treasury,
+    participants,
+    totalSips,
+    fillPercent,
+    sipNonce,
+    handlePour,
+    isPouring,
+    isConnected,
+    roundNumber,
+    refreshContractData,
+  } = useBottle({
+    onPourEvent: async () => {
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      await fetchActivity()
+      await refreshContractData()
+    },
+    onSipEvent: async (winnerPayload) => {
+      if (winnerPayload) setLastWinner(winnerPayload)
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      await fetchWinners()
+      await fetchStats()
+      await fetchActivity()
+      await refreshContractData()
+    },
+  })
+
+  const handleNavigate = (page) => {
+    setCurrentPage(page)
+    setSidebarOpen(false)
+  }
 
   useEffect(() => {
     AOS.init({
@@ -103,129 +138,23 @@ function App() {
     })
   }, [])
 
-  const handleNavigate = (page) => {
-    setCurrentPage(page)
-    setSidebarOpen(false) // close sidebar on navigate
-  }
-
   useEffect(() => {
-    let cancelled = false
+    fetchActivity()
+    fetchWinners()
+    fetchStats()
 
-    const loadIndexedData = async () => {
-      try {
-        const [activityResponse, winnersResponse, statsResponse] = await Promise.all([
-          fetch(`${apiBaseUrl}/api/activity`),
-          fetch(`${apiBaseUrl}/api/winners`),
-          fetch(`${apiBaseUrl}/api/stats`),
-        ])
+    const interval = setInterval(() => {
+      fetchActivity()
+      fetchStats()
+    }, 10000)
 
-        if (!activityResponse.ok || !winnersResponse.ok || !statsResponse.ok) return
+    return () => clearInterval(interval)
+  }, []);
 
-        const [{ activity }, { winners }, stats] = await Promise.all([
-          activityResponse.json(),
-          winnersResponse.json(),
-          statsResponse.json(),
-        ])
-
-        if (cancelled) return
-
-        setPours(activity.map((item) => ({
-          type: item.type,
-          address: item.shortAddress,
-          amount: Number(item.amount),
-          transactionHash: item.transactionHash,
-        })))
-        setWinnerHistory(winners)
-        setIndexedStats(stats)
-
-        if (winners.length > 0) {
-          setLastWinner({
-            winner: winners[0].shortWinner,
-            amount: Number(winners[0].winnerAmount),
-          })
-        }
-      } catch {
-        // The frontend can still operate from direct chain reads if the indexer is offline.
-      }
-    }
-
-    loadIndexedData()
-    const interval = setInterval(loadIndexedData, 15000)
-
-    return () => {
-      cancelled = true
-      clearInterval(interval)
-    }
-  }, [])
-
-  useWatchContractEvent({
-    address: isContractConfigured ? FFS_BOTTLE_ADDRESS : undefined,
-    abi: FFS_BOTTLE_ABI,
-    eventName: 'Poured',
-    onLogs(logs) {
-      setPours((current) => [
-        ...logs.map((log) => ({
-          type: 'pour',
-          address: formatAddress(log.args.user),
-          amount: formatTokenAmount(log.args.amount),
-        })).reverse(),
-        ...current,
-      ].slice(0, 6))
-      refreshBottleReads()
-    },
-  })
-
-  useWatchContractEvent({
-    address: isContractConfigured ? FFS_BOTTLE_ADDRESS : undefined,
-    abi: FFS_BOTTLE_ABI,
-    eventName: 'BottleSipped',
-    onLogs(logs) {
-      const latest = logs[logs.length - 1]
-      if (!latest) return
-
-      setLastWinner({
-        winner: formatAddress(latest.args.winner),
-        amount: formatTokenAmount(latest.args.winnerAmount),
-      })
-      setWinnerHistory((current) => [{
-        id: `${latest.transactionHash}-${latest.logIndex}`,
-        round: latest.args.round.toString(),
-        shortWinner: formatAddress(latest.args.winner),
-        winnerAmount: formatTokenAmount(latest.args.winnerAmount),
-        treasuryAmount: formatTokenAmount(latest.args.treasuryAmount),
-        transactionHash: latest.transactionHash,
-      }, ...current].slice(0, 10))
-      setSipNonce((current) => current + 1)
-      refreshBottleReads()
-    },
-  })
-
-  const handlePour = async () => {
-    if (!isContractConfigured || !address || isPending) return
-
-    if (allowance < pourAmount) {
-      const approveHash = await writeContractAsync({
-        address: FFS_TOKEN_ADDRESS,
-        abi: FFS_TOKEN_ABI,
-        functionName: 'approve',
-        args: [FFS_BOTTLE_ADDRESS, pourAmount],
-      })
-      await waitForTransactionReceipt(config, { hash: approveHash })
-    }
-
-    const pourHash = await writeContractAsync({
-      address: FFS_BOTTLE_ADDRESS,
-      abi: FFS_BOTTLE_ABI,
-      functionName: 'pour',
-    })
-    await waitForTransactionReceipt(config, { hash: pourHash })
-    await refreshBottleReads()
-  }
+  
 
   return (
     <div className='relative min-h-screen flex flex-col'>
-
-      {/* Background image + overlay */}
       <div
         className='fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat'
         style={{ backgroundImage: `url(${img})` }}
@@ -253,22 +182,21 @@ function App() {
           currentPage={currentPage}
           onNavigate={handleNavigate}
           treasury={treasury}
-          holders={liveParticipants}
-          totalSips={liveTotalSips}
-          participants={liveParticipants}
+          holders={participants}
+          totalSips={totalSips}
+          participants={participants}
           pours={pours}
           lastWinner={lastWinner}
           winnerHistory={winnerHistory}
-          fillPercent={liveFillPercent}
+          fillPercent={fillPercent}
           onPour={handlePour}
           mockTokenHoldings={[]}
           sipNonce={sipNonce}
-          isPouring={isPending}
+          isPouring={isPouring}
         />
       </main>
 
       <Footer onNavigate={handleNavigate} />
-
     </div>
   )
 }

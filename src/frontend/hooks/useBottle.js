@@ -1,0 +1,165 @@
+import { useEffect, useMemo, useState } from 'react'
+import { useAppKitAccount } from '@reown/appkit/react'
+import { useReadContract, useWatchContractEvent, useWriteContract, useConfig } from 'wagmi'
+import { waitForTransactionReceipt } from '@wagmi/core'
+import { formatUnits } from 'viem'
+import {
+  FFS_BOTTLE_ABI,
+  FFS_BOTTLE_ADDRESS,
+  FFS_TOKEN_ABI,
+  FFS_TOKEN_ADDRESS,
+  isContractConfigured,
+} from '../../constants/contracts'
+
+const toNumber = (value = 0n) => Number(formatUnits(value, 18))
+
+export function useBottle({ onPourEvent, onSipEvent } = {}) {
+  const { address, isConnected } = useAppKitAccount()
+  const { writeContractAsync } = useWriteContract()
+  const config = useConfig()                              // ← added
+  const [isPouring, setIsPouring] = useState(false)
+
+  const { data: bottleBalance = 0n, refetch: refetchBottleBalance } = useReadContract({
+    address: FFS_BOTTLE_ADDRESS,
+    abi: FFS_BOTTLE_ABI,
+    functionName: 'bottleBalance',
+    watch: true,
+    enabled: isContractConfigured,
+  })
+
+  const { data: participantsCount = 0n, refetch: refetchParticipantsCount } = useReadContract({
+    address: FFS_BOTTLE_ADDRESS,
+    abi: FFS_BOTTLE_ABI,
+    functionName: 'roundPours',
+    watch: true,
+    enabled: isContractConfigured,
+  })
+
+  const { data: roundNumber = 0n, refetch: refetchRoundNumber } = useReadContract({
+    address: FFS_BOTTLE_ADDRESS,
+    abi: FFS_BOTTLE_ABI,
+    functionName: 'currentRound',
+    watch: true,
+    enabled: isContractConfigured,
+  })
+
+  const { data: fillPercent = 0n, refetch: refetchFillPercent } = useReadContract({
+    address: FFS_BOTTLE_ADDRESS,
+    abi: FFS_BOTTLE_ABI,
+    functionName: 'fillPercent',
+    watch: true,
+    enabled: isContractConfigured,
+  })
+
+  const { data: totalSips = 0n, refetch: refetchTotalSips } = useReadContract({
+    address: FFS_BOTTLE_ADDRESS,
+    abi: FFS_BOTTLE_ABI,
+    functionName: 'totalSips',
+    watch: true,
+    enabled: isContractConfigured,
+  })
+
+  const { data: pourAmount = 1000n * 10n ** 18n } = useReadContract({
+    address: FFS_BOTTLE_ADDRESS,
+    abi: FFS_BOTTLE_ABI,
+    functionName: 'POUR_AMOUNT',
+    watch: true,
+    enabled: isContractConfigured,
+  })
+
+  const { data: allowance = 0n, refetch: refetchAllowance } = useReadContract({
+    address: FFS_TOKEN_ADDRESS,
+    abi: FFS_TOKEN_ABI,
+    functionName: 'allowance',
+    args: address ? [address, FFS_BOTTLE_ADDRESS] : undefined,
+    watch: true,
+    enabled: isContractConfigured && Boolean(address),
+  })
+
+  const [sipNonce, setSipNonce] = useState(0)
+
+  const refreshContractData = async () => {
+    if (!isContractConfigured) return
+    await Promise.all([
+      refetchBottleBalance(),
+      refetchParticipantsCount(),
+      refetchRoundNumber(),
+      refetchFillPercent(),
+      refetchTotalSips(),
+      refetchAllowance(),
+    ])
+  }
+
+  useWatchContractEvent({
+    address: isContractConfigured ? FFS_BOTTLE_ADDRESS : undefined,
+    abi: FFS_BOTTLE_ABI,
+    eventName: 'Poured',
+    onLogs(logs) {
+      if (!logs?.length) return
+      onPourEvent?.()
+    },
+  })
+
+  useWatchContractEvent({
+    address: isContractConfigured ? FFS_BOTTLE_ADDRESS : undefined,
+    abi: FFS_BOTTLE_ABI,
+    eventName: 'BottleSipped',
+    onLogs(logs) {
+      if (!logs?.length) return
+      const latest = logs[logs.length - 1]
+      setSipNonce((current) => current + 1)
+      const winnerPayload = {
+        winner: latest.args.winner
+          ? `${latest.args.winner.slice(0, 6)}...${latest.args.winner.slice(-4)}`
+          : '',
+        amount: toNumber(latest.args.winnerAmount),
+      }
+      onSipEvent?.(winnerPayload)
+    },
+  })
+
+  const handlePour = async () => {
+    if (!isContractConfigured || !isConnected || isPouring) return
+
+    setIsPouring(true)
+
+    try {
+      if (allowance < pourAmount) {
+        const approveHash = await writeContractAsync({
+          address: FFS_TOKEN_ADDRESS,
+          abi: FFS_TOKEN_ABI,
+          functionName: 'approve',
+          args: [FFS_BOTTLE_ADDRESS, pourAmount],
+        })
+
+        await waitForTransactionReceipt(config, { hash: approveHash })  // ← fixed
+      }
+
+      const pourHash = await writeContractAsync({
+        address: FFS_BOTTLE_ADDRESS,
+        abi: FFS_BOTTLE_ABI,
+        functionName: 'pour',
+      })
+
+      await waitForTransactionReceipt(config, { hash: pourHash })       // ← fixed
+      await refreshContractData()
+    } catch (error) {
+      console.error('Pour transaction failed:', error)
+    } finally {
+      setIsPouring(false)
+    }
+  }
+
+  return {
+    treasury: toNumber(bottleBalance),
+    participants: Number(participantsCount),
+    roundNumber: Number(roundNumber),
+    fillPercent: Number(fillPercent),
+    totalSips: Number(totalSips),
+    sipNonce,
+    handlePour,
+    isPouring,
+    isConnected,
+    refreshContractData,
+  }
+}
