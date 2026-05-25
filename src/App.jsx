@@ -24,7 +24,9 @@ function App() {
   const [bottleTotal, setBottleTotal] = useState(0)
   const [mockTokenHoldings, setMockTokenHoldings] = useState([])
 
-  const treasuryGoal = 20000
+  const bottleMinThreshold = 50000
+  const bottleMaxThreshold = 200000
+  const treasuryGoal = 200000
   const fillPercent = Math.min(100, Math.round((bottleTotal / treasuryGoal) * 100))
 
   // Generate mock token holdings based on participants
@@ -67,21 +69,29 @@ function App() {
     const newPour = { address, amount }
     const newBottleTotal = bottleTotal + amount
 
-    // Random chance (15%) to empty bottle and allocate 5% to treasury
-    const emptyBottle = Math.random() < 0.15
+    // Bottle only empties at random when accumulated value is between 50k and 200k
+    let emptyBottle = false
+    
+    if (newBottleTotal >= bottleMinThreshold && newBottleTotal <= bottleMaxThreshold) {
+      // 30% chance to empty when in threshold range
+      emptyBottle = Math.random() < 0.3
+    }
     
     if (emptyBottle) {
-      const treasuryAllocation = Math.floor(newBottleTotal * 0.05)
-      setTreasury((current) => current + treasuryAllocation)
+      // Calculate 5% payout that goes to the wallet that triggered the empty
+      const payout = Math.floor(newBottleTotal * 0.05)
+      setTreasury((current) => current + payout)
       setBottleTotal(0)
+      // Set the winner with the payout amount sent to their wallet
+      setLastWinner({ winner: address, amount: payout })
     } else {
       setBottleTotal(newBottleTotal)
+      setLastWinner({ winner: address, amount })
     }
 
     setTotalSips((current) => current + 1)
     setParticipants((current) => current + 1)
     setPours((current) => [newPour, ...current].slice(0, 6))
-    setLastWinner({ winner: address, amount })
   }
 
   return (

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
 
 const generateData = (hours) => {
     const points = hours === "1H" ? 12 : hours === "6H" ? 24 : hours === "24H" ? 48 : 90
@@ -30,6 +30,15 @@ function HoldingChart({ balance = 0, usdValue = 0.00, mockTokenHoldings = [] }) 
     // Use mock holdings if provided, otherwise use default balance display
     const displayHoldings = mockTokenHoldings.length > 0 ? mockTokenHoldings : []
     const totalHoldingsValue = displayHoldings.reduce((sum, h) => sum + h.amount, 0)
+
+    // Generate line chart data from holdings
+    const chartData = displayHoldings.length > 0 
+      ? displayHoldings.map((holding, idx) => ({
+          name: holding.name,
+          value: holding.amount,
+          percentage: holding.percentage
+        }))
+      : data
 
     return (
         <div className="flex flex-col gap-3 bg-[#1a0a2e]/80 border border-purple-800/50 rounded-2xl p-5 backdrop-blur-sm w-full">
@@ -66,61 +75,38 @@ function HoldingChart({ balance = 0, usdValue = 0.00, mockTokenHoldings = [] }) 
                 </div>
             </div>
 
-            {/* Show token holdings breakdown if available */}
-            {displayHoldings.length > 0 ? (
-                <div className="w-full mt-3 space-y-2 max-h-48 overflow-y-auto">
-                    {displayHoldings.map((holding) => (
-                        <div key={holding.id} className="flex items-center justify-between bg-white/5 p-3 rounded-lg">
-                            <div className="flex items-center gap-3 flex-1">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center text-xs font-bold text-white">
-                                    {holding.name.charAt(6)}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-white text-sm font-semibold truncate">{holding.name}</p>
-                                    <p className="text-white/40 text-xs">{holding.percentage}% of portfolio</p>
-                                </div>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-cyan-400 text-sm font-semibold">{holding.amount.toLocaleString()}</p>
-                                <p className="text-white/40 text-xs">${(holding.amount * 0.0012).toFixed(2)}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <>
-                    {/* Chart - shown when no holdings to display */}
-                    <div className="w-full h-40 mt-2">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={data} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
-                                <defs>
-                                    <linearGradient id="holdingGrad" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#ec4899" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#ec4899" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <XAxis dataKey="time" hide />
-                                <YAxis hide />
-                                <Tooltip content={<CustomTooltip />} />
-                                <Area
-                                    type="monotone"
-                                    dataKey="value"
-                                    stroke="#ec4899"
-                                    strokeWidth={1.5}
-                                    fill="url(#holdingGrad)"
-                                    dot={false}
-                                    activeDot={{
-                                        r: 4,
-                                        fill: "#ec4899",
-                                        stroke: "#1a0a2e",
-                                        strokeWidth: 2,
-                                    }}
-                                />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                    </div>
-                </>
-            )}
+            {/* Line Chart */}
+            <div className="w-full h-40 mt-2">
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+                        <defs>
+                            <linearGradient id="holdingLineGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#ec4899" stopOpacity={0.8} />
+                                <stop offset="95%" stopColor="#ec4899" stopOpacity={0.1} />
+                            </linearGradient>
+                        </defs>
+                        <XAxis 
+                            dataKey={displayHoldings.length > 0 ? "name" : "time"} 
+                            stroke="#ffffff20"
+                            style={{ fontSize: "12px" }}
+                        />
+                        <YAxis 
+                            stroke="#ffffff20"
+                            style={{ fontSize: "12px" }}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Line
+                            type="monotone"
+                            dataKey={displayHoldings.length > 0 ? "value" : "value"}
+                            stroke="#ec4899"
+                            strokeWidth={2.5}
+                            dot={{ fill: "#ec4899", r: 4 }}
+                            activeDot={{ r: 6, fill: "#ec4899" }}
+                            isAnimationActive={true}
+                        />
+                    </LineChart>
+                </ResponsiveContainer>
+            </div>
         </div>
     )
 }
