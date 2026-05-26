@@ -1,16 +1,58 @@
-# React + Vite
+# For Fox Sake Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite frontend for the For Fox Sake Dapp.
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Node.js 18+ installed
+- npm available
+- A wallet that supports WalletConnect or injected providers
+- A deployed `FFSBottle` contract and a token contract address
 
-## React Compiler
+## Install and run locally
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+cd for_fox_sake
+npm install
+cp .env.example .env
+npm run dev
+```
 
-## Expanding the ESLint configuration
+Then open the URL printed by Vite (typically `http://localhost:5173`).
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Environment variables
+
+Create a `.env` file from `.env.example` and fill in the values:
+
+- `VITE_WALLETCONNECT_PROJECT_ID` — WalletConnect project ID for mobile wallet connections
+- `VITE_FFS_TOKEN_ADDRESS` — ERC-20 token contract address for FFS approvals and balance checks
+- `VITE_FFS_BOTTLE_ADDRESS` — deployed `FFSBottle` contract address
+- `VITE_FFS_API_URL` — backend API URL for activity, winners, and stats (for example `http://localhost:8787`)
+- `VITE_CHAIN_ID` — set to `25` for Cronos mainnet; otherwise the app uses Cronos testnet by default
+
+## How it works
+
+- The frontend connects to Cronos testnet by default.
+- If `VITE_CHAIN_ID=25`, it switches to Cronos mainnet.
+- Wallet connections are handled via RainbowKit / wagmi with injected wallets, WalletConnect, or Coinbase Wallet.
+- The app uses the contract addresses and ABI data configured in environment variables to display bottle status, pours, winners, and treasury data.
+
+## Usage
+
+1. Start the frontend with `npm run dev`.
+2. Open the Vite URL in your browser.
+3. Connect your wallet.
+4. Interact with the FFS Bottle and view live stats.
+5. Ensure `VITE_FFS_API_URL` points to the running indexer backend to populate activity and leaderboard features.
+
+## Build for production
+
+```bash
+npm run build
+```
+
+To preview the production build:
+
+```bash
+npm run preview
+```
