@@ -13,32 +13,36 @@ import { injected, walletConnect, coinbaseWallet } from 'wagmi/connectors'
 
 // 1. Define Cronos testnet chain
 const cronosTestnet = defineChain({
-  id: 338,
+  id: 338,  
   name: 'Cronos Testnet',
-  nativeCurrency: { name: 'Cronos', symbol: 'CRO', decimals: 18 },
+  nativeCurrency: { name: 'Cronos', symbol: 'tCRO', decimals: 18 },
   rpcUrls: {
-    default: { http: ['https://evm-t3.cronos.org'] },
+    default: { http: ['https://cronos-testnet-rpc.publicnode.com'] },
   },
   blockExplorers: {
     default: { name: 'Cronos Testnet Explorer', url: 'https://cronos.org/explorer/testnet3' },
   },
 })
 
-const hardhatLocal = defineChain({
-  id: 31337,
-  name: 'Hardhat Local',
-  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+const cronosMainnet = defineChain({
+  id: 25,
+  name: 'Cronos',
+  nativeCurrency: { name: 'Cronos', symbol: 'CRO', decimals: 18 },
   rpcUrls: {
-    default: { http: ['http://127.0.0.1:8545'] },
+    default: { http: ['https://cronos-evm-rpc.publicnode.com'] },
+  },
+  blockExplorers: {
+    default: { name: 'Cronoscan', url: 'https://cronoscan.com' },
   },
 })
 
-const activeChain = import.meta.env.VITE_CHAIN_ID === '31337' ? hardhatLocal : cronosTestnet
-
-// 2. Project ID
+const activeChain = 
+  import.meta.env.VITE_CHAIN_ID === '25' ? cronosMainnet :
+  cronosTestnet
+// Project ID
 const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID
 
-// 3. Wagmi Adapter
+//Wagmi Adapter
 const wagmiAdapter = new WagmiAdapter({
   networks: [activeChain],
   projectId,
@@ -49,7 +53,7 @@ const wagmiAdapter = new WagmiAdapter({
   ],
 })
 
-// 4. Create AppKit
+//AppKit
 createAppKit({
   adapters: [wagmiAdapter],
   networks: [activeChain],

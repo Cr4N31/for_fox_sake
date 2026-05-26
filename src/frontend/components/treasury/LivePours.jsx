@@ -14,7 +14,6 @@ const formatTimeAgo = (timestamp) => {
 }
 
 function LivePours({ pours = [] }) {
-    console.log('LivePours received:', pours) 
     return (
         <div className='rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 flex flex-col gap-3'>
 
@@ -38,7 +37,7 @@ function LivePours({ pours = [] }) {
                     </p>
                 </div>
             ) : (
-                <ul className='flex flex-col gap-3'>
+                <ul className='flex flex-col gap-3 max-h-80 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent'>
                     {pours.map((pour, i) => (
                         <li key={pour.transactionHash || i} className='rounded-2xl border border-white/10 bg-black/20 p-3'>
                             <div className='flex items-center justify-between gap-2 text-xs text-white/50'>

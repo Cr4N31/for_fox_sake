@@ -1,6 +1,6 @@
 import { Link2, MessageCircle, Trophy, User } from "lucide-react"
 import PackStatCard from "./PackStatCard"
-function PackStatsGrid({ holders = 0, treasury = "0 $FFS", rewards = "0 $FFS", sips = 0 }) {
+function PackStatGrid({ holders, treasury, rewards, sips}) {
   const stats = [
     { icon: User,         iconColor: "text-violet-400", value: holders,  label: "Total Holders",  accentClass: "" },
     { icon: Link2,         iconColor: "text-cyan-400",   value: treasury, label: "Treasury Size",  accentClass: "border-t-2 border-t-cyan-400" },
@@ -14,4 +14,4 @@ function PackStatsGrid({ holders = 0, treasury = "0 $FFS", rewards = "0 $FFS", s
   );
 }
 
-export default PackStatsGrid
+export default PackStatGrid

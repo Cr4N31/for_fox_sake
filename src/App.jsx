@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { useSwitchChain, useChainId } from 'wagmi'
+import { useAppKitAccount } from '@reown/appkit/react'
 import AOS from 'aos'
 import img from './assets/imgs/bg-fox.jpeg'
 import Header from './frontend/shared/Header'
@@ -8,6 +10,7 @@ import Footer from './frontend/shared/Footer'
 import { useBottle } from './frontend/hooks/useBottle'
 
 const apiBaseUrl = import.meta.env.VITE_FFS_API_URL || 'http://localhost:8787'
+const TARGET_CHAIN_ID = Number(import.meta.env.VITE_CHAIN_ID || 338)
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -21,6 +24,17 @@ function App() {
     total_pours: 0,
     total_participants: 0,
   })
+
+    // Chain switching
+  const { isConnected } = useAppKitAccount()
+  const chainId = useChainId()
+  const { switchChain } = useSwitchChain()
+
+  useEffect(() => {
+    if (isConnected && chainId !== TARGET_CHAIN_ID) {
+      switchChain({ chainId: TARGET_CHAIN_ID })
+    }
+  }, [isConnected, chainId])
 
   const fetchActivity = async () => {
     try {
@@ -105,7 +119,7 @@ function App() {
     sipNonce,
     handlePour,
     isPouring,
-    isConnected,
+    isConnected: isBottleConnected,
     roundNumber,
     refreshContractData,
   } = useBottle({
@@ -193,6 +207,7 @@ function App() {
           mockTokenHoldings={[]}
           sipNonce={sipNonce}
           isPouring={isPouring}
+          stats={stats}
         />
       </main>
 

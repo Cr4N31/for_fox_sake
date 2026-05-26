@@ -2,7 +2,7 @@ import Hero from "../components/home/Hero";
 import Faq from "../components/home/Faq";
 import Buy from "../components/home/Buy";
 
-function Home({ onNavigate, holders = 0, treasury = 0, totalSips = 0, onPour, isPouring = false }){
+function Home({ onNavigate, holders = 0, treasury = 0, totalSips = 0, onPour, isPouring = false, lastWinner = null }){
     return(
         <>
             <section data-aos="fade-up">
@@ -12,7 +12,7 @@ function Home({ onNavigate, holders = 0, treasury = 0, totalSips = 0, onPour, is
                 <Faq/>
             </section>
             <section data-aos="fade-up">
-                <Buy onPour={onPour} isPouring={isPouring} />
+                <Buy onPour={onPour} isPouring={isPouring} lastWinner={lastWinner} />
             </section>
         </>
     )

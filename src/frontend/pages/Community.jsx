@@ -10,15 +10,21 @@ const tavernLinks = [
     { icon: XIcon, name: 'Twitter / X', handle: '@ForFoxSake', href: 'https://twitter.com/ForFoxSake' },
 ]
 
-function Community(){
+function Community({ stats = {}, treasury = 0, totalSips = 0, winnerHistory = [] }){
 	return (
 		<section className="max-w-7xl mx-auto mt-16 px-6 pb-24 space-y-8" data-aos="fade-up">
             <PackHero />
             <div data-aos="fade-up">
-                <PackStatGrid/>
+                <PackStatGrid
+                    holders={stats.total_participants ?? 0}
+                    treasury={`${treasury.toLocaleString()} $FFS`}
+                    rewards={`${(stats.total_ffs_distributed ?? 0).toLocaleString()} $FFS`}
+                    sips={totalSips}
+
+                />
             </div>
             <div data-aos="fade-up">
-                <Leaderboard />
+                <Leaderboard entries={winnerHistory}/>
             </div>
             <div data-aos="fade-up">
                 <SideCard tavernLinks={tavernLinks} quote="Every sip could drain the bottle…" quoteAttribution="— Tavern Master Kitsune" />
