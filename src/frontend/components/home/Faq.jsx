@@ -7,7 +7,7 @@ function Faq(){
             iconBg: "bg-gradient-to-br from-pink-500 to-purple-600",
             alt: "for_fox_sake", 
             question: "What is For Fox Sake?", 
-            desc: "A Cronos-native protocol where holders pour $FFS into a shared sake bottle, fueling a high-stakes treasury game."
+            desc: "A Cronos native rewarding memecoin project built for the Cronos community and with sustainability in mind!"
         },
         { 
             icon: <Coins className="size-6 text-white" />, 

@@ -18,6 +18,7 @@ function App() {
   const [pours, setPours] = useState([])
   const [winnerHistory, setWinnerHistory] = useState([])
   const [lastWinner, setLastWinner] = useState({ winner: '', amount: 0 })
+  const [holders, setHolders] = useState(0)
   const [stats, setStats] = useState({
     total_rounds: 0,
     total_ffs_distributed: 0,
@@ -25,7 +26,6 @@ function App() {
     total_participants: 0,
   })
 
-    // Chain switching
   const { isConnected } = useAppKitAccount()
   const chainId = useChainId()
   const { switchChain } = useSwitchChain()
@@ -40,20 +40,20 @@ function App() {
     try {
       const response = await fetch(`${apiBaseUrl}/api/activity`)
       if (!response.ok) throw new Error('Unable to load activity')
-      const activity = await response.json()
+      const data = await response.json()
+      // handle both { activity: [...] } and plain array
+      const activity = Array.isArray(data) ? data : (data.activity ?? [])
       setPours(
-        Array.isArray(activity)
-          ? activity.slice(0, 50).map((item) => ({
-              type: item.type,
-              address: item.wallet_address
-                ? `${item.wallet_address.slice(0, 6)}...${item.wallet_address.slice(-4)}`
-                : 'unknown',
-              amount: Number(item.amount),
-              transactionHash: item.transaction_hash,
-              round: item.round_number,
-              timestamp: item.timestamp,
-            }))
-          : [],
+        activity.slice(0, 50).map((item) => ({
+          type: item.type,
+          address: item.wallet_address
+            ? `${item.wallet_address.slice(0, 6)}...${item.wallet_address.slice(-4)}`
+            : 'unknown',
+          amount: Number(item.amount),
+          transactionHash: item.transaction_hash,
+          round: item.round_number,
+          timestamp: item.timestamp,
+        }))
       )
     } catch (error) {
       console.error('Fetch activity failed:', error)
@@ -66,16 +66,16 @@ function App() {
       const response = await fetch(`${apiBaseUrl}/api/winners`)
       if (!response.ok) throw new Error('Unable to load winners')
       const data = await response.json()
-      const winners = Array.isArray(data)
-        ? data.map((row) => ({
-            ...row,
-            shortWinner: row.winner_address
-              ? `${row.winner_address.slice(0, 6)}...${row.winner_address.slice(-4)}`
-              : '',
-            winnerAmount: Number(row.amount_won),
-            treasuryAmount: Number(row.treasury_amount),
-          }))
-        : []
+      // handle both { winners: [...] } and plain array
+      const raw = Array.isArray(data) ? data : (data.winners ?? [])
+      const winners = raw.map((row) => ({
+        ...row,
+        shortWinner: row.winner_address
+          ? `${row.winner_address.slice(0, 6)}...${row.winner_address.slice(-4)}`
+          : '',
+        winnerAmount: Number(row.amount_won || row.winnerAmount || 0),
+        treasuryAmount: Number(row.treasury_amount || row.treasuryAmount || 0),
+      }))
       setWinnerHistory(winners)
       if (winners.length > 0) {
         setLastWinner({
@@ -95,19 +95,24 @@ function App() {
       if (!response.ok) throw new Error('Unable to load stats')
       const data = await response.json()
       setStats({
-        total_rounds: Number(data.total_rounds ?? 0),
-        total_ffs_distributed: Number(data.total_ffs_distributed ?? 0),
-        total_pours: Number(data.total_pours ?? 0),
-        total_participants: Number(data.total_participants ?? 0),
+        total_rounds: Number(data.total_rounds ?? data.totalSips ?? 0),
+        total_ffs_distributed: Number(data.total_ffs_distributed ?? data.totalWinnerPaid ?? 0),
+        total_pours: Number(data.total_pours ?? data.totalPours ?? 0),
+        total_participants: holders, // use holders from dedicated endpoint
       })
     } catch (error) {
       console.error('Fetch stats failed:', error)
-      setStats({
-        total_rounds: 0,
-        total_ffs_distributed: 0,
-        total_pours: 0,
-        total_participants: 0,
-      })
+    }
+  }
+
+  const fetchHolders = async () => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/holders`)
+      if (!response.ok) throw new Error('Unable to load holders')
+      const data = await response.json()
+      setHolders(data.holders ?? 0)
+    } catch (error) {
+      console.error('Fetch holders failed:', error)
     }
   }
 
@@ -156,16 +161,21 @@ function App() {
     fetchActivity()
     fetchWinners()
     fetchStats()
+    fetchHolders()
 
     const interval = setInterval(() => {
       fetchActivity()
       fetchStats()
     }, 10000)
 
-    return () => clearInterval(interval)
-  }, []);
+    // holders update every 60s — no need to hammer the API
+    const holdersInterval = setInterval(fetchHolders, 60000)
 
-  
+    return () => {
+      clearInterval(interval)
+      clearInterval(holdersInterval)
+    }
+  }, [])
 
   return (
     <div className='relative min-h-screen flex flex-col'>
@@ -196,7 +206,7 @@ function App() {
           currentPage={currentPage}
           onNavigate={handleNavigate}
           treasury={treasury}
-          holders={participants}
+          holders={holders}
           totalSips={totalSips}
           participants={participants}
           pours={pours}
@@ -207,7 +217,7 @@ function App() {
           mockTokenHoldings={[]}
           sipNonce={sipNonce}
           isPouring={isPouring}
-          stats={stats}
+          stats={{ ...stats, total_participants: holders }}
         />
       </main>
 
