@@ -88,6 +88,7 @@ function LoreContent() {
                 </div>
             </div>
         </div>
+    </div>
     )
 }
 
