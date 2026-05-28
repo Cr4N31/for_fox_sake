@@ -30,6 +30,7 @@
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+  height: 100vh;
 }
 
 .leaf {
@@ -40,7 +41,7 @@
   height: 24px;
   opacity: 0.85;
   border-radius: 50% 35% 50% 35%;
-  background: radial-gradient(circle at 30% 30%, #fde68a, #fb7185 40%, #ef4444 72%, #991b1b 100%);
+  background: radial-gradient(circle at 30% 30%, #c7f9cc, #4ade80 35%, #09c04c 65%, #166534 100%);
   filter: drop-shadow(0 0 18px rgba(255, 160, 72, 0.18));
   transform-origin: center;
   animation: leaf-fall var(--duration, 14s) linear infinite var(--delay, 0s);
