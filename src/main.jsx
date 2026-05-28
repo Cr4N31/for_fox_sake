@@ -61,15 +61,18 @@ createAppKit({
   metadata: {
     name: 'For Fox Sake',
     description: 'FFS Sake Bottle Jackpot',
-    url: 'http://localhost:5173',
+    url: 'https://for-fox-sake.vercel.app',
     icons: [],
   },
   features: {
     analytics: false,
+    email: false,
+    socials: false,
   },
 
   enableInjected: true,                    
   multiInjectedProviderDiscovery: true, 
+  enableWalletConnect: true,
 })
 
 const queryClient = new QueryClient()
