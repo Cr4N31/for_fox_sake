@@ -57,7 +57,7 @@ function App() {
     if (isConnected && chainId !== TARGET_CHAIN_ID) {
       switchChain({ chainId: TARGET_CHAIN_ID })
     }
-  }, [isConnected, chainId])
+  }, [isConnected, chainId, switchChain])
 
   const fetchActivity = async () => {
     try {

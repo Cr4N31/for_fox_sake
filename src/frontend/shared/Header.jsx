@@ -60,7 +60,7 @@ function Header({ isOpen, onMenuClick, currentPage = 'HOME', playing, onToggleMu
                 <button
                     onClick={onToggleMusic}
                     title={playing ? 'Mute music' : 'Play music'}
-                    className="hidden xs:flex items-center justify-center border border-purple-400/50 bg-black/80 w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)] hover:shadow-[0_0_25px_rgba(168,85,247,0.9)] hover:scale-110 transition duration-300 text-sm sm:text-base"
+                    className="flex items-center justify-center border border-purple-400/50 bg-black/80 w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)] hover:shadow-[0_0_25px_rgba(168,85,247,0.9)] hover:scale-110 transition duration-300 text-sm sm:text-base"
                 >
                     {playing ? '🔊' : '🔇'}
                 </button>
