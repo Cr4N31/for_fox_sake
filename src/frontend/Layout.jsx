@@ -6,6 +6,20 @@ import Community from "./pages/Community"
 import { useAppKitAccount } from "@reown/appkit/react"
 import { useAppKit } from "@reown/appkit/react"
 
+const leafConfigs = Array.from({ length: 14 }, (_, index) => {
+  const size = 18 + Math.round(Math.random() * 18)
+  return {
+    id: index,
+    left: `${Math.random() * 100}%`,
+    delay: `${-Math.random() * 18}s`,
+    duration: `${10 + Math.random() * 10}s`,
+    rotate: `${Math.round(Math.random() * 360)}deg`,
+    scale: 0.8 + Math.random() * 0.6,
+    size: `${size}px`,
+    opacity: 0.75 + Math.random() * 0.2,
+  }
+})
+
 function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips, participants, pours, lastWinner, winnerHistory, fillPercent, onPour, mockTokenHoldings, sipNonce, isPouring, stats }) {
   const { isConnected } = useAppKitAccount()
   const { open } = useAppKit()
@@ -30,7 +44,25 @@ function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips
   }
 
   return (
-    <>
+    <div className="relative overflow-hidden">
+      <div className="falling-leaves pointer-events-none absolute inset-0 -z-10">
+        {leafConfigs.map((leaf) => (
+          <span
+            key={leaf.id}
+            className="leaf"
+            style={{
+              left: leaf.left,
+              animationDelay: leaf.delay,
+              animationDuration: leaf.duration,
+              transform: `rotate(${leaf.rotate}) scale(${leaf.scale})`,
+              width: leaf.size,
+              height: leaf.size,
+              opacity: leaf.opacity,
+            }}
+          />
+        ))}
+      </div>
+
       {currentPage === 'HOME'      && <Home      onNavigate={onNavigate} holders={holders} treasury={treasury} totalSips={totalSips} onPour={onPour} isPouring={isPouring} lastWinner={lastWinner} />}
       {currentPage === 'ABOUT'     && <About     onNavigate={onNavigate} />}
       {currentPage === 'TREASURY'  && (
@@ -66,7 +98,7 @@ function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips
         </GuardedPage>
       )}
       {currentPage === 'COMMUNITY' && <Community onNavigate={onNavigate} stats={stats} treasury={treasury} totalSips={totalSips} winnerHistory={winnerHistory} />}
-    </>
+    </div>
   )
 }
 
