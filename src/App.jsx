@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useSwitchChain, useChainId } from 'wagmi'
 import { useAppKitAccount } from '@reown/appkit/react'
 import AOS from 'aos'
@@ -13,6 +13,8 @@ const apiBaseUrl = import.meta.env.VITE_FFS_API_URL || 'http://localhost:8787'
 const TARGET_CHAIN_ID = Number(import.meta.env.VITE_CHAIN_ID || 338)
 
 function App() {
+  const audioRef = useRef(null)
+  const [playing, setPlaying] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState('HOME')
   const [pours, setPours] = useState([])
@@ -30,6 +32,27 @@ function App() {
   const chainId = useChainId()
   const { switchChain } = useSwitchChain()
 
+  // music — autoplays on first user interaction
+  useEffect(() => {
+    const handleFirstClick = () => {
+      audioRef.current?.play()
+      setPlaying(true)
+      document.removeEventListener('click', handleFirstClick)
+    }
+    document.addEventListener('click', handleFirstClick)
+    return () => document.removeEventListener('click', handleFirstClick)
+  }, [])
+
+  const toggleMusic = () => {
+    if (playing) {
+      audioRef.current?.pause()
+      setPlaying(false)
+    } else {
+      audioRef.current?.play()
+      setPlaying(true)
+    }
+  }
+
   useEffect(() => {
     if (isConnected && chainId !== TARGET_CHAIN_ID) {
       switchChain({ chainId: TARGET_CHAIN_ID })
@@ -41,7 +64,6 @@ function App() {
       const response = await fetch(`${apiBaseUrl}/api/activity`)
       if (!response.ok) throw new Error('Unable to load activity')
       const data = await response.json()
-      // handle both { activity: [...] } and plain array
       const activity = Array.isArray(data) ? data : (data.activity ?? [])
       setPours(
         activity.slice(0, 50).map((item) => ({
@@ -66,7 +88,6 @@ function App() {
       const response = await fetch(`${apiBaseUrl}/api/winners`)
       if (!response.ok) throw new Error('Unable to load winners')
       const data = await response.json()
-      // handle both { winners: [...] } and plain array
       const raw = Array.isArray(data) ? data : (data.winners ?? [])
       const winners = raw.map((row) => ({
         ...row,
@@ -98,7 +119,7 @@ function App() {
         total_rounds: Number(data.total_rounds ?? data.totalSips ?? 0),
         total_ffs_distributed: Number(data.total_ffs_distributed ?? data.totalWinnerPaid ?? 0),
         total_pours: Number(data.total_pours ?? data.totalPours ?? 0),
-        total_participants: holders, // use holders from dedicated endpoint
+        total_participants: holders,
       })
     } catch (error) {
       console.error('Fetch stats failed:', error)
@@ -106,16 +127,16 @@ function App() {
   }
 
   const fetchHolders = async () => {
-  try {
-    const response = await fetch(
-      `https://api.cronoscan.com/api?module=token&action=tokeninfo&contractaddress=0xf9D90e9f8E3fcc41D44e220deDB73DF6c42c8244&apikey=${import.meta.env.VITE_CRONOSCAN_API_KEY}`
-    )
-    const data = await response.json()
-    setHolders(Number(data.result?.[0]?.holdersCount ?? 0))
-  } catch (error) {
-    console.error('Fetch holders failed:', error)
+    try {
+      const response = await fetch(
+        `https://api.cronoscan.com/api?module=token&action=tokeninfo&contractaddress=0xf9D90e9f8E3fcc41D44e220deDB73DF6c42c8244&apikey=${import.meta.env.VITE_CRONOSCAN_API_KEY}`
+      )
+      const data = await response.json()
+      setHolders(Number(data.result?.[0]?.holdersCount ?? 0))
+    } catch (error) {
+      console.error('Fetch holders failed:', error)
+    }
   }
-}
 
   const {
     treasury,
@@ -169,7 +190,6 @@ function App() {
       fetchStats()
     }, 10000)
 
-    // holders update every 60s — no need to hammer the API
     const holdersInterval = setInterval(fetchHolders, 60000)
 
     return () => {
@@ -180,6 +200,10 @@ function App() {
 
   return (
     <div className='relative min-h-screen flex flex-col'>
+
+      {/* Audio element — src points to your file in /public */}
+      <audio ref={audioRef} src='/music.mpeg' loop />
+
       <div
         className='fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat'
         style={{ backgroundImage: `url(${img})` }}
@@ -193,6 +217,8 @@ function App() {
         onMenuClick={() => setSidebarOpen((open) => !open)}
         onNavigate={handleNavigate}
         currentPage={currentPage}
+        playing={playing}
+        onToggleMusic={toggleMusic}
       />
 
       <Sidebar
