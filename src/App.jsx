@@ -219,6 +219,7 @@ function App() {
         currentPage={currentPage}
         playing={playing}
         onToggleMusic={toggleMusic}
+        audioRef={audioRef}
       />
 
       <Sidebar
