@@ -5,7 +5,6 @@ import Leaderboard from "../components/community/Leaderboard"
 import SideCard from "../components/community/SideCard"
 
 const tavernLinks = [
-    { icon: GitBranchIcon, name: 'Docs', handle: 'forfoxsake', href: 'https://github.com/ForFoxSake' },
     { icon: DiscIcon, name: 'Discord', handle: '@ForFoxSake', href: 'https://discord.gg/VrZe6uk6Qt' },
     { icon: XIcon, name: 'Twitter / X', handle: '@ForFoxSake', href: 'https://x.com/ForFoxSakeCro' },
 ]
