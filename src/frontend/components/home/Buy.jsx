@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Trophy } from 'lucide-react'
 import right_img from '../../../assets/imgs/fox-mascot-D5VOPyRA.jpg'
+import { useAppKitAccount } from '@reown/appkit/react'
 function Buy({ onPour, isPouring = false, lastWinner = { winner: '', amount: 0 } }) {
     const [txStatus, setTxStatus] = useState('')
-
+    const { isConnected } = useAppKitAccount()
     const handleClick = async () => {
         setTxStatus('Approving and pouring...')
         try {
@@ -38,7 +39,7 @@ function Buy({ onPour, isPouring = false, lastWinner = { winner: '', amount: 0 }
                     </p>
                     <button
                         onClick={handleClick}
-                        disabled={isPouring}
+                        disabled={isPouring || !isConnected}
                         className='w-fit mt-2 px-6 py-3 rounded-xl font-bold 
                                    uppercase tracking-widest text-white text-sm
                                    bg-pink-500 shimmer
