@@ -6,14 +6,16 @@ import { formatUnits } from 'viem'
 import {
   FFS_BOTTLE_ABI,
   FFS_BOTTLE_ADDRESS,
-  FFS_TOKEN_ABI,
-  FFS_TOKEN_ADDRESS,
   isContractConfigured,
 } from '../../constants/contracts'
 
 const toNumber = (value = 0n) => Number(formatUnits(value, 18))
+const toCroAmount = (ffsAmount = 0n) => {
+  // Simple fixed mapping: 1,000 FFS => 1 CRO
+  return ffsAmount / 1000n
+}
 
-export function useBottle({ onPourEvent, onSipEvent } = {}) {
+export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
   const { address, isConnected } = useAppKitAccount()
   const { writeContractAsync } = useWriteContract()
   const config = useConfig()
@@ -69,15 +71,6 @@ export function useBottle({ onPourEvent, onSipEvent } = {}) {
     enabled: isContractConfigured,
   })
 
-  const { data: allowance = 0n, refetch: refetchAllowance } = useReadContract({
-    address: FFS_TOKEN_ADDRESS,
-    abi: FFS_TOKEN_ABI,
-    functionName: 'allowance',
-    args: address ? [address, FFS_BOTTLE_ADDRESS] : undefined,
-    watch: true,
-    enabled: isContractConfigured && Boolean(address),
-  })
-
   const [sipNonce, setSipNonce] = useState(0)
 
   const refreshContractData = async () => {
@@ -88,7 +81,6 @@ export function useBottle({ onPourEvent, onSipEvent } = {}) {
       refetchRoundNumber(),
       refetchFillPercent(),
       refetchTotalSips(),
-      refetchAllowance(),
     ])
   }
 
@@ -128,29 +120,22 @@ export function useBottle({ onPourEvent, onSipEvent } = {}) {
     setTransactionStatus('')
 
     try {
-      if (allowance < pourAmount) {
-        setTransactionStatus('Requesting FFS approval...')
-        const approveHash = await writeContractAsync({
-          address: FFS_TOKEN_ADDRESS,
-          abi: FFS_TOKEN_ABI,
-          functionName: 'approve',
-          args: [FFS_BOTTLE_ADDRESS, pourAmount],
-        })
-
-        setTransactionStatus('Confirming FFS approval...')
-        await waitForTransactionReceipt(config, { hash: approveHash })
-      }
+      const ffsAmount = pourAmount
+      const croAmount = toCroAmount(ffsAmount)
 
       setTransactionStatus('Submitting bottle pour...')
       const pourHash = await writeContractAsync({
         address: FFS_BOTTLE_ADDRESS,
         abi: FFS_BOTTLE_ABI,
         functionName: 'pour',
+        args: [ffsAmount],
+        value: croAmount,
       })
 
       setTransactionStatus('Confirming bottle pour...')
       await waitForTransactionReceipt(config, { hash: pourHash })
       await refreshContractData()
+      await onPourConfirmed?.()
       setTransactionStatus('Bottle pour confirmed')
     } catch (error) {
       console.error('Pour transaction failed:', error)

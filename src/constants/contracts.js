@@ -55,8 +55,8 @@ export const FFS_BOTTLE_ABI = [
   {
     type: 'function',
     name: 'pour',
-    stateMutability: 'nonpayable',
-    inputs: [],
+    stateMutability: 'payable',
+    inputs: [{ name: 'ffsAmount', type: 'uint256' }],
     outputs: [],
   },
   {
@@ -98,6 +98,8 @@ export const FFS_BOTTLE_ABI = [
       { indexed: true, name: 'round', type: 'uint256' },
       { indexed: true, name: 'user', type: 'address' },
       { indexed: false, name: 'amount', type: 'uint256' },
+      { indexed: false, name: 'croAmount', type: 'uint256' },
+      { indexed: false, name: 'ffsAmount', type: 'uint256' },
       { indexed: false, name: 'bottleBalance', type: 'uint256' },
       { indexed: false, name: 'roundPours', type: 'uint256' },
     ],

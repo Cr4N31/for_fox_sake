@@ -165,6 +165,10 @@ function App() {
       await fetchActivity()
       await refreshContractData()
     },
+    onPourConfirmed: async () => {
+      await fetchActivity()
+      await fetchStats()
+    },
   })
 
   const handleNavigate = (page) => {
