@@ -98,6 +98,7 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
     eventName: 'Poured',
     onLogs(logs) {
       if (!logs?.length) return
+      refreshContractData().catch((error) => console.error('Failed to refresh contract data on Poured event:', error))
       onPourEvent?.()
     },
   })
@@ -108,6 +109,7 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
     eventName: 'BottleSipped',
     onLogs(logs) {
       if (!logs?.length) return
+      refreshContractData().catch((error) => console.error('Failed to refresh contract data on BottleSipped event:', error))
       const latest = logs[logs.length - 1]
       setSipNonce((current) => current + 1)
       const winnerPayload = {

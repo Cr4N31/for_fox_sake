@@ -167,6 +167,7 @@ function App() {
       await refreshContractData()
     },
     onPourConfirmed: async () => {
+      await refreshContractData()
       await fetchActivity()
       await fetchStats()
     },
