@@ -55,7 +55,7 @@ export const FFS_BOTTLE_ABI = [
   {
     type: 'function',
     name: 'pour',
-    stateMutability: 'nonpayable',
+    stateMutability: 'payable',
     inputs: [{ name: 'ffsAmount', type: 'uint256' }],
     outputs: [],
   },
@@ -125,7 +125,7 @@ export const FFS_TOKEN_ABI = [
   {
     type: 'function',
     name: 'approve',
-    stateMutability: 'nonpayable',
+    stateMutability: 'payable',
     inputs: [
       { name: 'spender', type: 'address' },
       { name: 'amount', type: 'uint256' },

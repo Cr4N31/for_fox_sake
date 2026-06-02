@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useAppKitAccount } from '@reown/appkit/react'
 import { useReadContract, useWatchContractEvent, useWriteContract, useConfig } from 'wagmi'
 import { waitForTransactionReceipt } from '@wagmi/core'
-import { formatUnits } from 'viem'
+import { formatUnits, parseEther } from 'viem'
 import {
   FFS_BOTTLE_ABI,
   FFS_BOTTLE_ADDRESS,
@@ -144,17 +144,24 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
         setIsApproving(false)
       }
 
-      // Step 2: Pour — pure ERC-20, no value
+      // Step 2: Pour — requires CRO value + FFS amount
       setTransactionStatus('Submitting bottle pour...')
       const pourHash = await writeContractAsync({
         address: FFS_BOTTLE_ADDRESS,
         abi: FFS_BOTTLE_ABI,
         functionName: 'pour',
         args: [pourAmount],
+        value: parseEther('1'), // Send 1 CRO (contract requires msg.value > 0)
       })
 
       setTransactionStatus('Confirming bottle pour...')
-      await waitForTransactionReceipt(config, { hash: pourHash })
+      const receipt = await waitForTransactionReceipt(config, { hash: pourHash })
+      
+      // Validate that transaction succeeded (not reverted)
+      if (receipt.status !== 1) {
+        throw new Error('Transaction reverted on-chain. CRO may not have been transferred.')
+      }
+      
       await refreshContractData()
       await onPourConfirmed?.()
       setTransactionStatus('Bottle pour confirmed')
