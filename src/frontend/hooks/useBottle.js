@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useAppKitAccount } from '@reown/appkit/react'
 import { useReadContract, useWatchContractEvent, useWriteContract, useConfig } from 'wagmi'
 import { waitForTransactionReceipt } from '@wagmi/core'
@@ -16,8 +16,10 @@ const toNumber = (value = 0n) => Number(formatUnits(value, 18))
 export function useBottle({ onPourEvent, onSipEvent } = {}) {
   const { address, isConnected } = useAppKitAccount()
   const { writeContractAsync } = useWriteContract()
-  const config = useConfig()                              // ← added
+  const config = useConfig()
   const [isPouring, setIsPouring] = useState(false)
+  const [transactionStatus, setTransactionStatus] = useState('')
+  const [transactionError, setTransactionError] = useState('')
 
   const { data: bottleBalance = 0n, refetch: refetchBottleBalance } = useReadContract({
     address: FFS_BOTTLE_ADDRESS,
@@ -122,9 +124,12 @@ export function useBottle({ onPourEvent, onSipEvent } = {}) {
     if (!isContractConfigured || !isConnected || isPouring) return
 
     setIsPouring(true)
+    setTransactionError('')
+    setTransactionStatus('')
 
     try {
       if (allowance < pourAmount) {
+        setTransactionStatus('Requesting FFS approval...')
         const approveHash = await writeContractAsync({
           address: FFS_TOKEN_ADDRESS,
           abi: FFS_TOKEN_ABI,
@@ -132,19 +137,26 @@ export function useBottle({ onPourEvent, onSipEvent } = {}) {
           args: [FFS_BOTTLE_ADDRESS, pourAmount],
         })
 
-        await waitForTransactionReceipt(config, { hash: approveHash })  // ← fixed
+        setTransactionStatus('Confirming FFS approval...')
+        await waitForTransactionReceipt(config, { hash: approveHash })
       }
 
+      setTransactionStatus('Submitting bottle pour...')
       const pourHash = await writeContractAsync({
         address: FFS_BOTTLE_ADDRESS,
         abi: FFS_BOTTLE_ABI,
         functionName: 'pour',
       })
 
-      await waitForTransactionReceipt(config, { hash: pourHash })       // ← fixed
+      setTransactionStatus('Confirming bottle pour...')
+      await waitForTransactionReceipt(config, { hash: pourHash })
       await refreshContractData()
+      setTransactionStatus('Bottle pour confirmed')
     } catch (error) {
       console.error('Pour transaction failed:', error)
+      setTransactionError(error?.shortMessage || error?.message || 'Transaction failed')
+      setTransactionStatus('')
+      throw error
     } finally {
       setIsPouring(false)
     }
@@ -159,6 +171,8 @@ export function useBottle({ onPourEvent, onSipEvent } = {}) {
     sipNonce,
     handlePour,
     isPouring,
+    transactionStatus,
+    transactionError,
     isConnected,
     refreshContractData,
   }

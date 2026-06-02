@@ -11,34 +11,19 @@ import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { injected, walletConnect, coinbaseWallet } from 'wagmi/connectors'
 
-// 1. Define Cronos testnet chain
-const cronosTestnet = defineChain({
-  id: 338,  
-  name: 'Cronos Testnet',
-  nativeCurrency: { name: 'Cronos', symbol: 'tCRO', decimals: 18 },
-  rpcUrls: {
-    default: { http: ['https://cronos-testnet-rpc.publicnode.com'] },
-  },
-  blockExplorers: {
-    default: { name: 'Cronos Testnet Explorer', url: 'https://cronos.org/explorer/testnet3' },
-  },
-})
-
 const cronosMainnet = defineChain({
   id: 25,
-  name: 'Cronos',
+  name: 'Cronos Mainnet',
   nativeCurrency: { name: 'Cronos', symbol: 'CRO', decimals: 18 },
   rpcUrls: {
-    default: { http: ['https://cronos-evm-rpc.publicnode.com'] },
+    default: { http: ['https://evm.cronos.org'] },
   },
   blockExplorers: {
     default: { name: 'Cronoscan', url: 'https://cronoscan.com' },
   },
 })
 
-const activeChain = 
-  import.meta.env.VITE_CHAIN_ID === '25' ? cronosMainnet :
-  cronosTestnet
+const activeChain = cronosMainnet
 // Project ID
 const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID
 

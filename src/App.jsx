@@ -146,6 +146,8 @@ function App() {
     sipNonce,
     handlePour,
     isPouring,
+    transactionStatus,
+    transactionError,
     isConnected: isBottleConnected,
     roundNumber,
     refreshContractData,
@@ -245,6 +247,8 @@ function App() {
           mockTokenHoldings={[]}
           sipNonce={sipNonce}
           isPouring={isPouring}
+          transactionStatus={transactionStatus}
+          transactionError={transactionError}
           stats={{ ...stats, total_participants: holders }}
         />
       </main>

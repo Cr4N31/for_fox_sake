@@ -1,6 +1,6 @@
 import { Trophy, GlassWater } from 'lucide-react'
 
-function BottleVisual({ fillPercent = 0, treasury = 0, participants = 0, onPour = () => {}, sipNonce = 0, isPouring = false }) {
+function BottleVisual({ fillPercent = 0, treasury = 0, participants = 0, onPour = () => {}, sipNonce = 0, isPouring = false, transactionStatus = '', transactionError = '' }) {
     // Bottle body goes from y=65 to y=200, total height=135
     const bodyBottom = 200
     const bodyHeight = 135
@@ -124,7 +124,7 @@ function BottleVisual({ fillPercent = 0, treasury = 0, participants = 0, onPour 
                                    transition-all duration-300
                                    hover:shadow-[0_0_20px_6px_rgba(236,72,153,0.6)] disabled:cursor-not-allowed disabled:opacity-50'>
                     <GlassWater className='w-4 h-4' />
-                    {isPouring ? 'Pouring...' : 'Pour 1,000 $FFS'}
+                    {isPouring ? 'Pending...' : 'Pour 1,000 $FFS'}
                 </button>
                 <button className='flex items-center gap-2 px-5 py-3 rounded-xl
                                    border border-white/20 bg-white/5 text-white/70
@@ -134,6 +134,11 @@ function BottleVisual({ fillPercent = 0, treasury = 0, participants = 0, onPour 
                     Winners
                 </button>
             </div>
+            {(transactionStatus || transactionError) && (
+                <p className={`text-xs mt-1 ${transactionError ? 'text-red-300' : 'text-yellow-300'}`}>
+                    {transactionError || transactionStatus}
+                </p>
+            )}
         </div>
     )
 }

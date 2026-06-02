@@ -1,15 +1,20 @@
 # For Fox Sake Frontend
 
-React + Vite frontend for the For Fox Sake Dapp.
+React + Vite frontend for the For Fox Sake dApp.
 
-## Prerequisites
+## Required Production Configuration
 
-- Node.js 18+ installed
-- npm available
-- A wallet that supports WalletConnect or injected providers
-- A deployed `FFSBottle` contract and a token contract address
+```env
+VITE_CHAIN_ID=25
+VITE_FFS_TOKEN_ADDRESS=0xf9D90e9f8E3fcc41D44e220deDB73DF6c42c8244
+VITE_FFS_BOTTLE_ADDRESS=0x93E7a174E1DadfE429De8D0E0f281ee1851820E9
+VITE_TREASURY_WALLET=0x75d04bcA6B542Fe1f3EeE8196DEB2C2675dAABcb
+VITE_FFS_API_URL=https://ffs-indexer.onrender.com
+```
 
-## Install and run locally
+The frontend connects only to Cronos Mainnet and uses the bottle contract for game logic. ERC20 `approve()` is sent to the FFS token, and `pour()` is sent to the bottle contract.
+
+## Install And Run
 
 ```bash
 cd for_fox_sake
@@ -18,41 +23,18 @@ cp .env.example .env
 npm run dev
 ```
 
-Then open the URL printed by Vite (typically `http://localhost:5173`).
+## Environment Variables
 
-## Environment variables
+- `VITE_WALLETCONNECT_PROJECT_ID` - WalletConnect project ID.
+- `VITE_FFS_TOKEN_ADDRESS` - must be `0xf9D90e9f8E3fcc41D44e220deDB73DF6c42c8244`.
+- `VITE_FFS_BOTTLE_ADDRESS` - must be `0x93E7a174E1DadfE429De8D0E0f281ee1851820E9`.
+- `VITE_TREASURY_WALLET` - must be `0x75d04bcA6B542Fe1f3EeE8196DEB2C2675dAABcb`.
+- `VITE_FFS_API_URL` - backend indexer API URL.
+- `VITE_CHAIN_ID` - must be `25`.
+- `VITE_CRONOSCAN_API_KEY` - optional Cronoscan API key.
 
-Create a `.env` file from `.env.example` and fill in the values:
-
-- `VITE_WALLETCONNECT_PROJECT_ID` — WalletConnect project ID for mobile wallet connections
-- `VITE_FFS_TOKEN_ADDRESS` — ERC-20 token contract address for FFS approvals and balance checks
-- `VITE_FFS_BOTTLE_ADDRESS` — deployed `FFSBottle` contract address
-- `VITE_FFS_API_URL` — backend API URL for activity, winners, and stats (for example `http://localhost:8787`)
-- `VITE_CHAIN_ID` — set to `25` for Cronos mainnet; otherwise the app uses Cronos testnet by default
-
-## How it works
-
-- The frontend connects to Cronos testnet by default.
-- If `VITE_CHAIN_ID=25`, it switches to Cronos mainnet.
-- Wallet connections are handled via RainbowKit / wagmi with injected wallets, WalletConnect, or Coinbase Wallet.
-- The app uses the contract addresses and ABI data configured in environment variables to display bottle status, pours, winners, and treasury data.
-
-## Usage
-
-1. Start the frontend with `npm run dev`.
-2. Open the Vite URL in your browser.
-3. Connect your wallet.
-4. Interact with the FFS Bottle and view live stats.
-5. Ensure `VITE_FFS_API_URL` points to the running indexer backend to populate activity and leaderboard features.
-
-## Build for production
+## Build
 
 ```bash
 npm run build
-```
-
-To preview the production build:
-
-```bash
-npm run preview
 ```

@@ -2,16 +2,18 @@ import { useState } from 'react'
 import { Trophy } from 'lucide-react'
 import right_img from '../../../assets/imgs/fox-mascot-D5VOPyRA.jpg'
 import { useAppKitAccount } from '@reown/appkit/react'
-function Buy({ onPour, isPouring = false, lastWinner = { winner: '', amount: 0 } }) {
+
+function Buy({ onPour, isPouring = false, transactionStatus = '', transactionError = '', lastWinner = { winner: '', amount: 0 } }) {
     const [txStatus, setTxStatus] = useState('')
     const { isConnected } = useAppKitAccount()
+
     const handleClick = async () => {
-        setTxStatus('Approving and pouring...')
+        setTxStatus('')
         try {
             await onPour?.()
             setTxStatus('Transaction confirmed')
         } catch (error) {
-            setTxStatus('Error: ' + (error?.message || 'Unknown error'))
+            setTxStatus('Error: ' + (error?.shortMessage || error?.message || 'Unknown error'))
         }
     }
 
@@ -34,7 +36,7 @@ function Buy({ onPour, isPouring = false, lastWinner = { winner: '', amount: 0 }
                     <p className='text-white/60 text-sm'>
                         {lastWinner.winner
                             ? `${lastWinner.winner} walked away with the treasury.`
-                            : 'No sips yet — be the first to pour and start the round.'
+                            : 'No sips yet - be the first to pour and start the round.'
                         }
                     </p>
                     <button
@@ -46,9 +48,14 @@ function Buy({ onPour, isPouring = false, lastWinner = { winner: '', amount: 0 }
                                    transition-all duration-300
                                    hover:shadow-[0_0_20px_6px_rgba(236,72,153,0.6)]
                                    disabled:opacity-50 disabled:cursor-not-allowed'>
-                        {isPouring ? 'Pouring...' : 'Pour Your Sake →'}
+                        {isPouring ? 'Transaction pending...' : 'Pour Your Sake'}
                     </button>
-                    {txStatus && <p className='text-xs text-yellow-300 mt-2'>{txStatus}</p>}
+                    {(transactionStatus || txStatus) && (
+                        <p className='text-xs text-yellow-300 mt-2'>{transactionStatus || txStatus}</p>
+                    )}
+                    {transactionError && (
+                        <p className='text-xs text-red-300 mt-2'>{transactionError}</p>
+                    )}
                 </div>
             </div>
 

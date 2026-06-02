@@ -20,7 +20,7 @@ const leafConfigs = Array.from({ length: 14 }, (_, index) => {
   }
 })
 
-function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips, participants, pours, lastWinner, winnerHistory, fillPercent, onPour, mockTokenHoldings, sipNonce, isPouring, stats }) {
+function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips, participants, pours, lastWinner, winnerHistory, fillPercent, onPour, mockTokenHoldings, sipNonce, isPouring, transactionStatus = '', transactionError = '', stats }) {
   const { isConnected } = useAppKitAccount()
   const { open } = useAppKit()
 
@@ -63,7 +63,7 @@ function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips
         ))}
       </div>
 
-      {currentPage === 'HOME'      && <Home      onNavigate={onNavigate} holders={holders} treasury={treasury} totalSips={totalSips} onPour={onPour} isPouring={isPouring} lastWinner={lastWinner} />}
+      {currentPage === 'HOME'      && <Home      onNavigate={onNavigate} holders={holders} treasury={treasury} totalSips={totalSips} onPour={onPour} isPouring={isPouring} transactionStatus={transactionStatus} transactionError={transactionError} lastWinner={lastWinner} />}
       {currentPage === 'ABOUT'     && <About     onNavigate={onNavigate} />}
       {currentPage === 'TREASURY'  && (
         <GuardedPage>
@@ -80,6 +80,8 @@ function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips
             onPour={onPour}
             sipNonce={sipNonce}
             isPouring={isPouring}
+            transactionStatus={transactionStatus}
+            transactionError={transactionError}
           />
         </GuardedPage>
       )}
@@ -94,6 +96,8 @@ function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips
             mockTokenHoldings={mockTokenHoldings}
             onPour={onPour}
             isPouring={isPouring}
+            transactionStatus={transactionStatus}
+            transactionError={transactionError}
           />
         </GuardedPage>
       )}

@@ -1,4 +1,4 @@
-export function TreasuryBottleCard({ balance = 0, participants = 0, fillPercent = 0, onPour, isPouring = false }) {
+export function TreasuryBottleCard({ balance = 0, participants = 0, fillPercent = 0, onPour, isPouring = false, transactionStatus = '', transactionError = '' }) {
     return (
         <div className="flex flex-col gap-4 bg-[#1a0a2e]/80 border border-purple-800/50 rounded-2xl p-5 backdrop-blur-sm">
             
@@ -24,10 +24,16 @@ export function TreasuryBottleCard({ balance = 0, participants = 0, fillPercent 
             {/* Pour button */}
             <button
                 onClick={onPour}
+                disabled={isPouring}
                 className="w-full px-4 py-2 rounded-full font-bold tracking-widest uppercase text-white bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 hover:shadow-[0_0_20px_rgba(217,70,239,0.6)] transition-all duration-300"
             >
-                {isPouring ? 'Pouring...' : 'Pour 1,000 $FFS'}
+                {isPouring ? 'Transaction pending...' : 'Pour 1,000 $FFS'}
             </button>
+            {(transactionStatus || transactionError) && (
+                <p className={`text-xs ${transactionError ? 'text-red-300' : 'text-yellow-300'}`}>
+                    {transactionError || transactionStatus}
+                </p>
+            )}
         </div>
     )
 }

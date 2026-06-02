@@ -1,13 +1,27 @@
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+export const REQUIRED_CHAIN_ID = 25
+export const REQUIRED_CHAIN_NAME = 'Cronos Mainnet'
+export const REQUIRED_RPC_URL = 'https://evm.cronos.org'
+export const REQUIRED_FFS_TOKEN_ADDRESS = '0xf9D90e9f8E3fcc41D44e220deDB73DF6c42c8244'
+export const REQUIRED_FFS_BOTTLE_ADDRESS = '0x93E7a174E1DadfE429De8D0E0f281ee1851820E9'
+export const REQUIRED_TREASURY_WALLET = '0x75d04bcA6B542Fe1f3EeE8196DEB2C2675dAABcb'
 
 export const FFS_BOTTLE_ADDRESS =
-  import.meta.env.VITE_FFS_BOTTLE_ADDRESS || ZERO_ADDRESS
+  import.meta.env.VITE_FFS_BOTTLE_ADDRESS || REQUIRED_FFS_BOTTLE_ADDRESS
 
 export const FFS_TOKEN_ADDRESS =
-  import.meta.env.VITE_FFS_TOKEN_ADDRESS || ZERO_ADDRESS
+  import.meta.env.VITE_FFS_TOKEN_ADDRESS || REQUIRED_FFS_TOKEN_ADDRESS
+
+export const TREASURY_WALLET =
+  import.meta.env.VITE_TREASURY_WALLET || REQUIRED_TREASURY_WALLET
+
+const addressesMatch = (actual, expected) => actual.toLowerCase() === expected.toLowerCase()
 
 export const isContractConfigured =
-  FFS_BOTTLE_ADDRESS !== ZERO_ADDRESS && FFS_TOKEN_ADDRESS !== ZERO_ADDRESS
+  addressesMatch(FFS_BOTTLE_ADDRESS, REQUIRED_FFS_BOTTLE_ADDRESS) &&
+  addressesMatch(FFS_TOKEN_ADDRESS, REQUIRED_FFS_TOKEN_ADDRESS) &&
+  addressesMatch(TREASURY_WALLET, REQUIRED_TREASURY_WALLET) &&
+  Number(import.meta.env.VITE_CHAIN_ID || REQUIRED_CHAIN_ID) === REQUIRED_CHAIN_ID
 
 export const FFS_BOTTLE_ABI = [
   {
