@@ -128,6 +128,8 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
     setTransactionStatus('')
 
     try {
+      const croValue = parseEther('1')
+
       // Step 1: Approve if allowance is insufficient
       if (currentAllowance < pourAmount) {
         setIsApproving(true)
@@ -139,29 +141,30 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
           args: [FFS_BOTTLE_ADDRESS, pourAmount],
         })
         setTransactionStatus('Waiting for approval confirmation...')
-        await waitForTransactionReceipt(config, { hash: approveHash })
+        const approveReceipt = await waitForTransactionReceipt(config, { hash: approveHash })
+        if (approveReceipt?.status !== 1) {
+          throw new Error('Approval transaction failed or was reverted.')
+        }
         await refetchAllowance()
         setIsApproving(false)
       }
 
-      // Step 2: Pour — requires CRO value + FFS amount
+      // Step 2: Pour — requires CRO value plus approved FFS amount
       setTransactionStatus('Submitting bottle pour...')
       const pourHash = await writeContractAsync({
         address: FFS_BOTTLE_ADDRESS,
         abi: FFS_BOTTLE_ABI,
         functionName: 'pour',
         args: [pourAmount],
-        value: parseEther('1'), // Send 1 CRO (contract requires msg.value > 0)
+        value: croValue,
       })
 
       setTransactionStatus('Confirming bottle pour...')
       const receipt = await waitForTransactionReceipt(config, { hash: pourHash })
-      
-      // Validate that transaction succeeded (not reverted)
-      if (receipt.status !== 1) {
-        throw new Error('Transaction reverted on-chain. CRO may not have been transferred.')
+      if (receipt?.status !== 1) {
+        throw new Error('Bottle pour transaction failed or was reverted on-chain.')
       }
-      
+
       await refreshContractData()
       await onPourConfirmed?.()
       setTransactionStatus('Bottle pour confirmed')
