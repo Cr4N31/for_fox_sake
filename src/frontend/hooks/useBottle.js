@@ -6,20 +6,19 @@ import { formatUnits } from 'viem'
 import {
   FFS_BOTTLE_ABI,
   FFS_BOTTLE_ADDRESS,
+  FFS_TOKEN_ABI,
+  FFS_TOKEN_ADDRESS,
   isContractConfigured,
 } from '../../constants/contracts'
 
 const toNumber = (value = 0n) => Number(formatUnits(value, 18))
-const toCroAmount = (ffsAmount = 0n) => {
-  // Simple fixed mapping: 1,000 FFS => 1 CRO
-  return ffsAmount / 1000n
-}
 
 export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
   const { address, isConnected } = useAppKitAccount()
   const { writeContractAsync } = useWriteContract()
   const config = useConfig()
   const [isPouring, setIsPouring] = useState(false)
+  const [isApproving, setIsApproving] = useState(false)
   const [transactionStatus, setTransactionStatus] = useState('')
   const [transactionError, setTransactionError] = useState('')
 
@@ -71,6 +70,14 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
     enabled: isContractConfigured,
   })
 
+  const { data: currentAllowance = 0n, refetch: refetchAllowance } = useReadContract({
+    address: FFS_TOKEN_ADDRESS,
+    abi: FFS_TOKEN_ABI,
+    functionName: 'allowance',
+    args: [address, FFS_BOTTLE_ADDRESS],
+    enabled: isContractConfigured && !!address,
+  })
+
   const [sipNonce, setSipNonce] = useState(0)
 
   const refreshContractData = async () => {
@@ -81,6 +88,7 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
       refetchRoundNumber(),
       refetchFillPercent(),
       refetchTotalSips(),
+      refetchAllowance(),
     ])
   }
 
@@ -120,16 +128,29 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
     setTransactionStatus('')
 
     try {
-      const ffsAmount = pourAmount
-      const croAmount = toCroAmount(ffsAmount)
+      // Step 1: Approve if allowance is insufficient
+      if (currentAllowance < pourAmount) {
+        setIsApproving(true)
+        setTransactionStatus('Approving FFS spend...')
+        const approveHash = await writeContractAsync({
+          address: FFS_TOKEN_ADDRESS,
+          abi: FFS_TOKEN_ABI,
+          functionName: 'approve',
+          args: [FFS_BOTTLE_ADDRESS, pourAmount],
+        })
+        setTransactionStatus('Waiting for approval confirmation...')
+        await waitForTransactionReceipt(config, { hash: approveHash })
+        await refetchAllowance()
+        setIsApproving(false)
+      }
 
+      // Step 2: Pour — pure ERC-20, no value
       setTransactionStatus('Submitting bottle pour...')
       const pourHash = await writeContractAsync({
         address: FFS_BOTTLE_ADDRESS,
         abi: FFS_BOTTLE_ABI,
         functionName: 'pour',
-        args: [ffsAmount],
-        value: croAmount,
+        args: [pourAmount],
       })
 
       setTransactionStatus('Confirming bottle pour...')
@@ -141,7 +162,7 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
       console.error('Pour transaction failed:', error)
       setTransactionError(error?.shortMessage || error?.message || 'Transaction failed')
       setTransactionStatus('')
-      throw error
+      setIsApproving(false)
     } finally {
       setIsPouring(false)
     }
@@ -156,6 +177,7 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
     sipNonce,
     handlePour,
     isPouring,
+    isApproving,
     transactionStatus,
     transactionError,
     isConnected,

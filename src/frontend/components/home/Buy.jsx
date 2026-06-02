@@ -3,7 +3,7 @@ import { Trophy } from 'lucide-react'
 import right_img from '../../../assets/imgs/fox-mascot-D5VOPyRA.jpg'
 import { useAppKitAccount } from '@reown/appkit/react'
 
-function Buy({ onPour, isPouring = false, transactionStatus = '', transactionError = '', lastWinner = { winner: '', amount: 0 } }) {
+function Buy({ onPour, isPouring = false, isApproving = false, transactionStatus = '', transactionError = '', lastWinner = { winner: '', amount: 0 } }) {
     const [txStatus, setTxStatus] = useState('')
     const { isConnected } = useAppKitAccount()
 
@@ -15,6 +15,12 @@ function Buy({ onPour, isPouring = false, transactionStatus = '', transactionErr
         } catch (error) {
             setTxStatus('Error: ' + (error?.shortMessage || error?.message || 'Unknown error'))
         }
+    }
+
+    const getButtonLabel = () => {
+        if (isApproving) return 'Approving FFS...'
+        if (isPouring) return 'Transaction pending...'
+        return 'Pour Your Sake'
     }
 
     return (
@@ -41,14 +47,14 @@ function Buy({ onPour, isPouring = false, transactionStatus = '', transactionErr
                     </p>
                     <button
                         onClick={handleClick}
-                        disabled={isPouring || !isConnected}
+                        disabled={isPouring || isApproving || !isConnected}
                         className='w-fit mt-2 px-6 py-3 rounded-xl font-bold 
                                    uppercase tracking-widest text-white text-sm
                                    bg-pink-500 shimmer
                                    transition-all duration-300
                                    hover:shadow-[0_0_20px_6px_rgba(236,72,153,0.6)]
                                    disabled:opacity-50 disabled:cursor-not-allowed'>
-                        {isPouring ? 'Transaction pending...' : 'Pour Your Sake'}
+                        {getButtonLabel()}
                     </button>
                     {(transactionStatus || txStatus) && (
                         <p className='text-xs text-yellow-300 mt-2'>{transactionStatus || txStatus}</p>

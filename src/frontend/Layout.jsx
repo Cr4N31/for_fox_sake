@@ -20,7 +20,7 @@ const leafConfigs = Array.from({ length: 14 }, (_, index) => {
   }
 })
 
-function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips, participants, pours, lastWinner, winnerHistory, fillPercent, onPour, mockTokenHoldings, sipNonce, isPouring, transactionStatus = '', transactionError = '', stats }) {
+function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips, participants, pours, lastWinner, winnerHistory, fillPercent, onPour, mockTokenHoldings, sipNonce, isPouring, transactionStatus = '', transactionError = '', stats, isApproving},) {
   const { isConnected } = useAppKitAccount()
   const { open } = useAppKit()
 
@@ -63,7 +63,7 @@ function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips
         ))}
       </div>
 
-      {currentPage === 'HOME'      && <Home      onNavigate={onNavigate} holders={holders} treasury={treasury} totalSips={totalSips} onPour={onPour} isPouring={isPouring} transactionStatus={transactionStatus} transactionError={transactionError} lastWinner={lastWinner} />}
+      {currentPage === 'HOME'      && <Home      onNavigate={onNavigate} holders={holders} treasury={treasury} totalSips={totalSips} onPour={onPour} isPouring={isPouring} transactionStatus={transactionStatus} transactionError={transactionError} lastWinner={lastWinner} isApproving={isApproving} />}
       {currentPage === 'ABOUT'     && <About     onNavigate={onNavigate} />}
       {currentPage === 'TREASURY'  && (
         <GuardedPage>
@@ -82,6 +82,7 @@ function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips
             isPouring={isPouring}
             transactionStatus={transactionStatus}
             transactionError={transactionError}
+            isApproving={isApproving}
           />
         </GuardedPage>
       )}
@@ -97,6 +98,7 @@ function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips
             onPour={onPour}
             isPouring={isPouring}
             transactionStatus={transactionStatus}
+            isApproving={isApproving}
             transactionError={transactionError}
           />
         </GuardedPage>

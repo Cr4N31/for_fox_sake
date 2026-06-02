@@ -4,7 +4,7 @@ import LivePours from '../components/treasury/LivePours'
 import StatsGrid from '../components/treasury/StatsGrid'
 import LastWinner from '../components/treasury/LastWinner'
 
-function Treasury({ treasury = 0, holders = 0, totalSips = 0, participants = 0, pours = [], lastWinner = { winner: '', amount: 0 }, winnerHistory = [], fillPercent = 0, onPour, sipNonce = 0, isPouring = false, transactionStatus = '', transactionError = '' }) {
+function Treasury({ treasury = 0, holders = 0, totalSips = 0, participants = 0, pours = [], lastWinner = { winner: '', amount: 0 }, winnerHistory = [], fillPercent = 0, onPour, sipNonce = 0, isPouring = false, transactionStatus = '', transactionError = '', isApproving = false }) {
     return (
         <section className='max-w-7xl mx-auto px-6 pb-24' data-aos="fade-up">
             <TreasuryHero />
@@ -20,6 +20,7 @@ function Treasury({ treasury = 0, holders = 0, totalSips = 0, participants = 0, 
                         isPouring={isPouring}
                         transactionStatus={transactionStatus}
                         transactionError={transactionError}
+                        isApproving={isApproving}
                     />
                     <StatsGrid holders={holders} totalSips={totalSips} />
                 </div>

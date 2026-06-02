@@ -10,7 +10,7 @@ import Footer from './frontend/shared/Footer'
 import { useBottle } from './frontend/hooks/useBottle'
 
 const apiBaseUrl = import.meta.env.VITE_FFS_API_URL || 'http://localhost:8787'
-const TARGET_CHAIN_ID = Number(import.meta.env.VITE_CHAIN_ID || 338)
+const TARGET_CHAIN_ID = Number(import.meta.env.VITE_CHAIN_ID || 25)
 
 function App() {
   const audioRef = useRef(null)
@@ -146,6 +146,7 @@ function App() {
     sipNonce,
     handlePour,
     isPouring,
+    isApproving,
     transactionStatus,
     transactionError,
     isConnected: isBottleConnected,
@@ -207,7 +208,6 @@ function App() {
   return (
     <div className='relative min-h-screen flex flex-col'>
 
-      {/* Audio element — src points to your file in /public */}
       <audio ref={audioRef} src='/music.mpeg' loop />
 
       <div
@@ -251,6 +251,7 @@ function App() {
           mockTokenHoldings={[]}
           sipNonce={sipNonce}
           isPouring={isPouring}
+          isApproving={isApproving}
           transactionStatus={transactionStatus}
           transactionError={transactionError}
           stats={{ ...stats, total_participants: holders }}
