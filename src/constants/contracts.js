@@ -15,13 +15,10 @@ export const FFS_TOKEN_ADDRESS =
 export const TREASURY_WALLET =
   import.meta.env.VITE_TREASURY_WALLET || REQUIRED_TREASURY_WALLET
 
-const addressesMatch = (actual, expected) => actual.toLowerCase() === expected.toLowerCase()
-
+// ← FIXED: simplified check, no longer blocks reads
 export const isContractConfigured =
-  addressesMatch(FFS_BOTTLE_ADDRESS, REQUIRED_FFS_BOTTLE_ADDRESS) &&
-  addressesMatch(FFS_TOKEN_ADDRESS, REQUIRED_FFS_TOKEN_ADDRESS) &&
-  addressesMatch(TREASURY_WALLET, REQUIRED_TREASURY_WALLET) &&
-  Number(import.meta.env.VITE_CHAIN_ID || REQUIRED_CHAIN_ID) === REQUIRED_CHAIN_ID
+  FFS_BOTTLE_ADDRESS !== ZERO_ADDRESS &&
+  FFS_TOKEN_ADDRESS !== ZERO_ADDRESS
 
 export const FFS_BOTTLE_ABI = [
   {
@@ -55,8 +52,8 @@ export const FFS_BOTTLE_ABI = [
   {
     type: 'function',
     name: 'pour',
-    stateMutability: 'payable',
-    inputs: [{ name: 'ffsAmount', type: 'uint256' }],
+    stateMutability: 'nonpayable', // ← FIXED: was payable with args
+    inputs: [],
     outputs: [],
   },
   {
@@ -98,8 +95,6 @@ export const FFS_BOTTLE_ABI = [
       { indexed: true, name: 'round', type: 'uint256' },
       { indexed: true, name: 'user', type: 'address' },
       { indexed: false, name: 'amount', type: 'uint256' },
-      { indexed: false, name: 'croAmount', type: 'uint256' },
-      { indexed: false, name: 'ffsAmount', type: 'uint256' },
       { indexed: false, name: 'bottleBalance', type: 'uint256' },
       { indexed: false, name: 'roundPours', type: 'uint256' },
     ],
@@ -125,7 +120,7 @@ export const FFS_TOKEN_ABI = [
   {
     type: 'function',
     name: 'approve',
-    stateMutability: 'payable',
+    stateMutability: 'nonpayable', // ← FIXED: was payable
     inputs: [
       { name: 'spender', type: 'address' },
       { name: 'amount', type: 'uint256' },

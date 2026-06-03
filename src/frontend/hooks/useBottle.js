@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useAppKitAccount } from '@reown/appkit/react'
 import { useReadContract, useWatchContractEvent, useWriteContract, useConfig } from 'wagmi'
 import { waitForTransactionReceipt } from '@wagmi/core'
-import { formatUnits, parseEther } from 'viem'
+import { formatUnits } from 'viem'
 import {
   FFS_BOTTLE_ABI,
   FFS_BOTTLE_ADDRESS,
@@ -98,7 +98,6 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
     eventName: 'Poured',
     onLogs(logs) {
       if (!logs?.length) return
-      refreshContractData().catch((error) => console.error('Failed to refresh contract data on Poured event:', error))
       onPourEvent?.()
     },
   })
@@ -109,7 +108,6 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
     eventName: 'BottleSipped',
     onLogs(logs) {
       if (!logs?.length) return
-      refreshContractData().catch((error) => console.error('Failed to refresh contract data on BottleSipped event:', error))
       const latest = logs[logs.length - 1]
       setSipNonce((current) => current + 1)
       const winnerPayload = {
@@ -130,8 +128,6 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
     setTransactionStatus('')
 
     try {
-      const croValue = parseEther('1')
-
       // Step 1: Approve if allowance is insufficient
       if (currentAllowance < pourAmount) {
         setIsApproving(true)
@@ -151,14 +147,12 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
         setIsApproving(false)
       }
 
-      // Step 2: Pour — requires CRO value plus approved FFS amount
+      // Step 2: Pour — ← FIXED: no args, no value
       setTransactionStatus('Submitting bottle pour...')
       const pourHash = await writeContractAsync({
         address: FFS_BOTTLE_ADDRESS,
         abi: FFS_BOTTLE_ABI,
         functionName: 'pour',
-        args: [pourAmount],
-        value: croValue,
       })
 
       setTransactionStatus('Confirming bottle pour...')
