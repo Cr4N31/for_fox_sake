@@ -97,6 +97,13 @@ export const FFS_BOTTLE_ABI = [
       { indexed: false, name: 'amount', type: 'uint256' },
       { indexed: false, name: 'bottleBalance', type: 'uint256' },
       { indexed: false, name: 'roundPours', type: 'uint256' },
+      {
+        type: 'function',
+        name: 'transfer',
+        stateMutability: 'nonpayable',
+        inputs: [{ name: 'to', type: 'address' }, { name: 'amount', type: 'uint256' }],
+        outputs: [{ type: 'bool' }],
+      },
     ],
   },
   {

@@ -187,6 +187,35 @@ function App() {
     })
   }, [])
 
+  // Global error surface: log uncaught errors and unhandled promise rejections
+  useEffect(() => {
+    function handleError(event) {
+      try {
+        console.error('Global error captured:', event?.error ?? event?.message ?? event)
+        console.error('Global error details:', event)
+      } catch (e) {
+        console.error('Failed to log global error:', e)
+      }
+    }
+
+    function handleRejection(event) {
+      try {
+        console.error('Unhandled promise rejection:', event?.reason ?? event)
+        console.error('Unhandled rejection details:', event)
+      } catch (e) {
+        console.error('Failed to log unhandled rejection:', e)
+      }
+    }
+
+    window.addEventListener('error', handleError)
+    window.addEventListener('unhandledrejection', handleRejection)
+
+    return () => {
+      window.removeEventListener('error', handleError)
+      window.removeEventListener('unhandledrejection', handleRejection)
+    }
+  }, [])
+
   useEffect(() => {
     fetchActivity()
     fetchWinners()
