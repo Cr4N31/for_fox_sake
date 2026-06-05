@@ -116,6 +116,16 @@ export const FFS_BOTTLE_ABI = [
 export const FFS_TOKEN_ABI = [
   {
     type: 'function',
+    name: 'transfer',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'to', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    outputs: [{ type: 'bool' }],
+  },
+  {
+    type: 'function',
     name: 'allowance',
     stateMutability: 'view',
     inputs: [
@@ -141,4 +151,36 @@ export const FFS_TOKEN_ABI = [
     inputs: [{ name: 'account', type: 'address' }],
     outputs: [{ type: 'uint256' }],
   },
+  {
+  type: 'function',
+  name: 'transferFrom',
+  stateMutability: 'nonpayable',
+  inputs: [
+    { name: 'from', type: 'address' },
+    { name: 'to', type: 'address' },
+    { name: 'amount', type: 'uint256' },
+  ],
+  outputs: [{ type: 'bool' }],
+},
+{
+  type: 'function',
+  name: 'decimals',
+  stateMutability: 'view',
+  inputs: [],
+  outputs: [{ type: 'uint8' }],
+},
+{
+  type: 'function',
+  name: 'symbol',
+  stateMutability: 'view',
+  inputs: [],
+  outputs: [{ type: 'string' }],
+},
+{
+  type: 'function',
+  name: 'totalSupply',
+  stateMutability: 'view',
+  inputs: [],
+  outputs: [{ type: 'uint256' }],
+},
 ]
