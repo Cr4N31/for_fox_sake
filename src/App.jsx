@@ -126,17 +126,24 @@ function App() {
     }
   }
 
-  const fetchHolders = async () => {
-    try {
-      const response = await fetch(
-        `https://api.cronoscan.com/api?module=token&action=tokeninfo&contractaddress=0xf9D90e9f8E3fcc41D44e220deDB73DF6c42c8244&apikey=${import.meta.env.VITE_CRONOSCAN_API_KEY}`
-      )
-      const data = await response.json()
-      setHolders(Number(data.result?.[0]?.holdersCount ?? 0))
-    } catch (error) {
-      console.error('Fetch holders failed:', error)
-    }
+const fetchHolders = async () => {
+  try {
+    const url =
+      `https://api.cronoscan.com/api?module=token&action=tokeninfo&contractaddress=0xf9D90e9f8E3fcc41D44e220deDB73DF6c42c8244&apikey=${import.meta.env.VITE_CRONOSCAN_API_KEY}`
+
+    const response = await fetch(url)
+
+    console.log("holders status:", response.status)
+
+    const data = await response.json()
+
+    console.log("holders payload:", data)
+
+    setHolders(Number(data.result?.[0]?.holdersCount ?? 0))
+  } catch (error) {
+    console.error('Fetch holders failed:', error)
   }
+}
 
   const {
     treasury,
