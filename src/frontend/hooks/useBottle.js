@@ -149,6 +149,7 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
           abi: FFS_TOKEN_ABI,
           functionName: 'approve',
           args: [FFS_BOTTLE_ADDRESS, pourAmount],
+          gas: 100000n,
         })
         setTransactionStatus('Waiting for approval confirmation...')
         const approveReceipt = await waitForTransactionReceipt(config, { hash: approveHash })
@@ -166,6 +167,7 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
         abi: FFS_BOTTLE_ABI,
         functionName: 'pour',
         args: [],
+        gas: 300000n,
       })
       setTransactionStatus('Confirming bottle pour...')
       const receipt = await waitForTransactionReceipt(config, { hash: pourHash })
