@@ -283,6 +283,7 @@ function App() {
           transactionStatus={transactionStatus}
           transactionError={transactionError}
           stats={{ ...stats, total_participants: holders }}
+          roundNumber={roundNumber}
         />
       </main>
 

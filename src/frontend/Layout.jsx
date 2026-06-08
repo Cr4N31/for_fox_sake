@@ -20,7 +20,7 @@ const leafConfigs = Array.from({ length: 14 }, (_, index) => {
   }
 })
 
-function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips, participants, pours, lastWinner, winnerHistory, fillPercent, onPour, mockTokenHoldings, sipNonce, isPouring, transactionStatus = '', transactionError = '', stats, isApproving},) {
+function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips, participants, pours, lastWinner, winnerHistory, fillPercent, onPour, mockTokenHoldings, sipNonce, isPouring, transactionStatus = '', transactionError = '', stats, isApproving, roundNumber},) {
   const { isConnected } = useAppKitAccount()
   const { open } = useAppKit()
 
@@ -94,6 +94,7 @@ function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips
             fillPercent={fillPercent}
             participants={participants}
             totalSips={totalSips}
+            roundNumber={roundNumber}
             mockTokenHoldings={mockTokenHoldings}
             onPour={onPour}
             isPouring={isPouring}
