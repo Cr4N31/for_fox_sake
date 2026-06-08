@@ -153,7 +153,7 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
         })
         setTransactionStatus('Waiting for approval confirmation...')
         const approveReceipt = await waitForTransactionReceipt(config, { hash: approveHash })
-        if (approveReceipt?.status !== 1) {
+        if (approveReceipt?.status !== 'success') {
           throw new Error('Approval transaction failed or was reverted.')
         }
         await refetchAllowance()
@@ -171,7 +171,7 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
       })
       setTransactionStatus('Confirming bottle pour...')
       const receipt = await waitForTransactionReceipt(config, { hash: pourHash })
-      if (receipt?.status !== 1) throw new Error('Bottle pour transaction failed or was reverted on-chain.')
+      if (receipt?.status !== 'success') throw new Error('Bottle pour transaction failed or was reverted on-chain.')
 
       await refreshContractData()
       await onPourConfirmed?.()
