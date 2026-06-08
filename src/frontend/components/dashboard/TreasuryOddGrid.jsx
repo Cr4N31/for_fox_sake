@@ -12,7 +12,6 @@ function TreasureOddGrid({ balance = 0, fillPercent = 0, participants = 0, total
                 isPouring={isPouring}
                 transactionStatus={transactionStatus}
                 transactionError={transactionError}
-                roundNumber={roundNumber}
             />
             <OddsCard
                 userPours={userPours}

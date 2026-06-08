@@ -31,13 +31,15 @@ function HoldingChart({ balance = 0, usdValue = 0.00, mockTokenHoldings = [] }) 
     const totalHoldingsValue = displayHoldings.reduce((sum, h) => sum + h.amount, 0)
 
     // Generate line chart data from holdings
-    const chartData = displayHoldings.length > 0 
-      ? displayHoldings.map((holding) => ({
-          name: holding.name,
-          value: holding.amount,
-          percentage: holding.percentage
+    const chartData = useMemo(() => {
+    return displayHoldings.length > 0
+        ? displayHoldings.map((holding) => ({
+            name: holding.name,
+            value: holding.amount,
+            percentage: holding.percentage
         }))
-      : generateData(activeRange, balance)
+        : generateData(activeRange, balance)
+    }, [activeRange, balance, displayHoldings])
 
     return (
         <div className="flex flex-col gap-3 bg-[#1a0a2e]/80 border border-purple-800/50 rounded-2xl p-5 backdrop-blur-sm w-full">
@@ -101,7 +103,7 @@ function HoldingChart({ balance = 0, usdValue = 0.00, mockTokenHoldings = [] }) 
                             strokeWidth={2.5}
                             dot={{ fill: "#ec4899", r: 4 }}
                             activeDot={{ r: 6, fill: "#ec4899" }}
-                            isAnimationActive={true}
+                            isAnimationActive={false}
                         />
                     </LineChart>
                 </ResponsiveContainer>
