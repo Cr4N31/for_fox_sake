@@ -26,39 +26,32 @@ const CustomTooltip = ({ active, payload }) => {
 function HoldingChart({ balance = 0, usdValue = 0.00, mockTokenHoldings = [] }) {
     const [activeRange, setActiveRange] = useState("24H")
     
-    // Use mock holdings if provided, otherwise use default balance display
-    const displayHoldings = mockTokenHoldings.length > 0 ? mockTokenHoldings : []
-    const totalHoldingsValue = displayHoldings.reduce((sum, h) => sum + h.amount, 0)
+    const totalHoldingsValue = mockTokenHoldings.reduce((sum, h) => sum + h.amount, 0)
 
-    // Generate line chart data from holdings
     const chartData = useMemo(() => {
-    return displayHoldings.length > 0
-        ? displayHoldings.map((holding) => ({
-            name: holding.name,
-            value: holding.amount,
-            percentage: holding.percentage
-        }))
-        : generateData(activeRange, balance)
-    }, [activeRange, balance, displayHoldings])
+        return mockTokenHoldings.length > 0
+            ? mockTokenHoldings.map((holding) => ({
+                name: holding.name,
+                value: holding.amount,
+                percentage: holding.percentage
+            }))
+            : generateData(activeRange, balance)
+    }, [activeRange, balance, mockTokenHoldings])
 
     return (
         <div className="flex flex-col gap-3 bg-[#1a0a2e]/80 border border-purple-800/50 rounded-2xl p-5 backdrop-blur-sm w-full">
-
-            {/* Header */}
             <div className="flex items-start justify-between">
                 <div>
                     <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">
                         Your Holdings
                     </p>
                     <h2 className="text-3xl font-bold text-pink-500">
-                        {displayHoldings.length > 0 ? totalHoldingsValue.toLocaleString() : balance.toLocaleString()}
+                        {mockTokenHoldings.length > 0 ? totalHoldingsValue.toLocaleString() : balance.toLocaleString()}
                     </h2>
                     <p className="text-white/40 text-xs mt-1">
-                        $FFS · ≈ ${(displayHoldings.length > 0 ? totalHoldingsValue * 0.0012 : usdValue).toFixed(2)} USD
+                        $FFS · ≈ ${(mockTokenHoldings.length > 0 ? totalHoldingsValue * 0.0012 : usdValue).toFixed(2)} USD
                     </p>
                 </div>
-
-                {/* Range selectors */}
                 <div className="flex gap-2 items-center">
                     {ranges.map((r) => (
                         <button
@@ -75,8 +68,6 @@ function HoldingChart({ balance = 0, usdValue = 0.00, mockTokenHoldings = [] }) 
                     ))}
                 </div>
             </div>
-
-            {/* Line Chart */}
             <div className="w-full h-40 mt-2">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
@@ -86,19 +77,19 @@ function HoldingChart({ balance = 0, usdValue = 0.00, mockTokenHoldings = [] }) 
                                 <stop offset="95%" stopColor="#ec4899" stopOpacity={0.1} />
                             </linearGradient>
                         </defs>
-                        <XAxis 
-                            dataKey={displayHoldings.length > 0 ? "name" : "time"} 
+                        <XAxis
+                            dataKey={mockTokenHoldings.length > 0 ? "name" : "time"}
                             stroke="#ffffff20"
                             style={{ fontSize: "12px" }}
                         />
-                        <YAxis 
+                        <YAxis
                             stroke="#ffffff20"
                             style={{ fontSize: "12px" }}
                         />
                         <Tooltip content={<CustomTooltip />} />
                         <Line
                             type="monotone"
-                            dataKey={displayHoldings.length > 0 ? "value" : "value"}
+                            dataKey="value"
                             stroke="#ec4899"
                             strokeWidth={2.5}
                             dot={{ fill: "#ec4899", r: 4 }}
