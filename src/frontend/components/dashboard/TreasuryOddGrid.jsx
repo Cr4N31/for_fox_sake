@@ -8,7 +8,7 @@ function TreasureOddGrid({ balance = 0, fillPercent = 0, participants = 0, total
                 balance={balance}
                 fillPercent={fillPercent}
                 participants={participants}
-                onPour={onPour}
+                //onPour={onPour}
                 isPouring={isPouring}
                 transactionStatus={transactionStatus}
                 transactionError={transactionError}

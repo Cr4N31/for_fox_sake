@@ -1,26 +1,23 @@
 import WalletBar from "../components/dashboard/WalletBar"
 import HoldingChart from "../components/dashboard/HoldingChart"
 import TreasureOddGrid from "../components/dashboard/TreasuryOddGrid"
+import { useAppKitAccount } from "@reown/appkit/react"
 
-function Dashboard({ balance = 0, fillPercent = 0, participants = 0, totalSips = 0, roundNumber = 0, mockTokenHoldings = [], onPour, isPouring = false, transactionStatus = '', transactionError = '', isApproving = false }) {
+function Dashboard({ balance = 0, fillPercent = 0, participants = 0, totalSips = 0, roundNumber = 0, mockTokenHoldings = [], pours = [], onPour, isPouring = false, transactionStatus = '', transactionError = '', isApproving = false }) {
+	const { address } = useAppKitAccount()
+
+	const userTotalPoured = pours
+    .filter(p => {
+        if (p.type !== 'pour') return false
+        const short = `${address?.slice(0, 6)}...${address?.slice(-4)}`
+        return p.address?.toLowerCase() === short.toLowerCase()
+    })
+    .reduce((sum, p) => sum + p.amount, 0)
+
 	return (
 		<section className="p-8" data-aos="fade-up">
 			<WalletBar />
-			<HoldingChart balance={balance} mockTokenHoldings={mockTokenHoldings} />
-			<TreasureOddGrid
-				balance={balance}
-				fillPercent={fillPercent}
-				participants={participants}
-				totalSips={totalSips}
-				roundNumber={roundNumber}
-				userPours={participants}
-				mockTokenHoldings={mockTokenHoldings}
-				onPour={onPour}
-				isPouring={isPouring}
-				transactionStatus={transactionStatus}
-				transactionError={transactionError}
-				isApproving={isApproving}
-			/>
+			<HoldingChart balance={userTotalPoured} mockTokenHoldings={mockTokenHoldings} />
 		</section>
 	)
 }

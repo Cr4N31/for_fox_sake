@@ -149,12 +149,10 @@ function App() {
     transactionError,
     isConnected: isBottleConnected,
     roundNumber,
-    refreshContractData,
   } = useBottle({
     onPourEvent: async () => {
       await new Promise(resolve => setTimeout(resolve, 2000))
       await fetchActivity()
-      await refreshContractData()
     },
     onSipEvent: async (winnerPayload) => {
       if (winnerPayload) setLastWinner(winnerPayload)
@@ -162,10 +160,8 @@ function App() {
       await fetchWinners()
       await fetchStats()
       await fetchActivity()
-      await refreshContractData()
     },
     onPourConfirmed: async () => {
-      await refreshContractData()
       await fetchActivity()
       await fetchStats()
       await fetchHolders()

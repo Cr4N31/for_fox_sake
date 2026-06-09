@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useAppKitAccount } from '@reown/appkit/react'
 import { useReadContract, useWatchContractEvent, useWriteContract, useConfig } from 'wagmi'
 import { waitForTransactionReceipt } from '@wagmi/core'
-import { formatUnits, parseEther } from 'viem'
+import { formatUnits } from 'viem'
 import {
   FFS_BOTTLE_ABI,
   FFS_BOTTLE_ADDRESS,
@@ -21,6 +21,15 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
   const [isApproving, setIsApproving] = useState(false)
   const [transactionStatus, setTransactionStatus] = useState('')
   const [transactionError, setTransactionError] = useState('')
+
+  // Stable refs for callbacks so they don't cause re-renders
+  const onPourEventRef = useRef(onPourEvent)
+  const onSipEventRef = useRef(onSipEvent)
+  const onPourConfirmedRef = useRef(onPourConfirmed)
+
+  useEffect(() => { onPourEventRef.current = onPourEvent }, [onPourEvent])
+  useEffect(() => { onSipEventRef.current = onSipEvent }, [onSipEvent])
+  useEffect(() => { onPourConfirmedRef.current = onPourConfirmed }, [onPourConfirmed])
 
   const { data: bottleBalance = 0n, refetch: refetchBottleBalance } = useReadContract({
     address: FFS_BOTTLE_ADDRESS,
@@ -99,11 +108,10 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
     onLogs(logs) {
       try {
         if (!logs?.length) return
-        refreshContractData().catch((error) => console.error('Failed to refresh contract data on Poured event:', error))
-        onPourEvent?.()
+        refreshContractData().catch((error) => console.error('Failed to refresh on Poured:', error))
+        onPourEventRef.current?.()
       } catch (err) {
-        console.error('Error handling Poured event logs:', err)
-        console.error('Poured logs payload:', logs)
+        console.error('Error handling Poured event:', err)
       }
     },
   })
@@ -115,7 +123,7 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
     onLogs(logs) {
       try {
         if (!logs?.length) return
-        refreshContractData().catch((error) => console.error('Failed to refresh contract data on BottleSipped event:', error))
+        refreshContractData().catch((error) => console.error('Failed to refresh on BottleSipped:', error))
         const latest = logs[logs.length - 1]
         setSipNonce((current) => current + 1)
         const winnerPayload = {
@@ -124,10 +132,9 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
             : '',
           amount: toNumber(latest.args.winnerAmount),
         }
-        onSipEvent?.(winnerPayload)
+        onSipEventRef.current?.(winnerPayload)
       } catch (err) {
-        console.error('Error handling BottleSipped event logs:', err)
-        console.error('BottleSipped logs payload:', logs)
+        console.error('Error handling BottleSipped event:', err)
       }
     },
   })
@@ -140,7 +147,6 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
     setTransactionStatus('')
 
     try {
-      // Step 1: Approve if allowance is insufficient
       if (currentAllowance < pourAmount) {
         setIsApproving(true)
         setTransactionStatus('Approving FFS spend...')
@@ -160,7 +166,6 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
         setIsApproving(false)
       }
 
-      // Step 2: Call pour() — non-payable, no arguments
       setTransactionStatus('Submitting bottle pour...')
       const pourHash = await writeContractAsync({
         address: FFS_BOTTLE_ADDRESS,
@@ -174,21 +179,17 @@ export function useBottle({ onPourEvent, onSipEvent, onPourConfirmed } = {}) {
       if (receipt?.status !== 'success') throw new Error('Bottle pour transaction failed or was reverted on-chain.')
 
       await refreshContractData()
-      await onPourConfirmed?.()
+      await onPourConfirmedRef.current?.()
       setTransactionStatus('Bottle pour confirmed')
     } catch (error) {
-      try {
-        console.error('Pour transaction failed:', error)
-        console.error('Pour error details:', {
-          message: error?.message,
-          code: error?.code,
-          shortMessage: error?.shortMessage,
-          stack: error?.stack,
-          data: error?.data,
-        })
-      } catch (logErr) {
-        console.error('Error while logging pour failure details:', logErr)
-      }
+      console.error('Pour transaction failed:', error)
+      console.error('Pour error details:', {
+        message: error?.message,
+        code: error?.code,
+        shortMessage: error?.shortMessage,
+        stack: error?.stack,
+        data: error?.data,
+      })
       setTransactionError(error?.shortMessage || error?.message || 'Transaction failed')
       setTransactionStatus('')
       setIsApproving(false)
