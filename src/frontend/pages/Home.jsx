@@ -9,7 +9,7 @@ function Home({ onNavigate, holders = 0, treasury = 0, totalSips = 0, onPour, is
                 <Hero onNavigate={onNavigate} holders={holders} treasury={treasury} totalSips={totalSips} />
             </section>
             <section data-aos="fade-up">
-                <Faq/>
+                <Faq treasury={treasury}/>
             </section>
             <section data-aos="fade-up">
                 <Buy onPour={onPour} isPouring={isPouring} transactionStatus={transactionStatus} transactionError={transactionError} lastWinner={lastWinner} isApproving={isApproving} />

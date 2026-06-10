@@ -3,7 +3,7 @@ import { useAppKit, useAppKitAccount } from '@reown/appkit/react'
 
 function Hero({ onNavigate, holders = 0, treasury = 0, totalSips = 0 }) {
     const tokenData = [
-        { name: "Holders", value: holders, color: "#ffffff" },
+        { name: `Unique Participants`, value: holders, color: "#ffffff" },
         { name: "Treasury", value: `$${treasury.toLocaleString()}`, color: "#00FFFF" },
         { name: "Sips", value: totalSips, color: '#f87e0c' }
     ]
@@ -80,7 +80,7 @@ function Hero({ onNavigate, holders = 0, treasury = 0, totalSips = 0 }) {
                             >
                                 {t.value}
                             </h2>
-                            <p className='uppercase text-white/80'>{t.name}</p>
+                            <p className='uppercase whitespace text- text-white/80'>{t.name}</p>
                         </li>
                     ))}
                 </ul>

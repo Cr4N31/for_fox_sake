@@ -43,7 +43,7 @@ function HoldingChart({ balance = 0, usdValue = 0.00, mockTokenHoldings = [] }) 
             <div className="flex items-start justify-between">
                 <div>
                     <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">
-                        Your Holdings
+                        Your Bottle Share
                     </p>
                     <h2 className="text-3xl font-bold text-pink-500">
                         {mockTokenHoldings.length > 0 ? totalHoldingsValue.toLocaleString() : balance.toLocaleString()}

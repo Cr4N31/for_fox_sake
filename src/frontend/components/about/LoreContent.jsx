@@ -31,7 +31,7 @@ function LoreContent() {
                 <p>
                     Every degen who steps in pours their $FFS into the bottle. The
                     bottle drinks them in. And at random, without warning, the bottle{' '}
-                    <span className='text-purple-400 cursor-pointer hover:text-purple-300 transition-colors'>
+                    <span className='text-purple-400'>
                         sips back
                     </span>
                     .
