@@ -63,7 +63,7 @@ function Layout({ currentPage = 'HOME', onNavigate, treasury, holders, totalSips
         ))}
       </div>
 
-      {currentPage === 'HOME'      && <Home      onNavigate={onNavigate} holders={holders} treasury={treasury} totalSips={totalSips} onPour={onPour} isPouring={isPouring} transactionStatus={transactionStatus} transactionError={transactionError} lastWinner={lastWinner} isApproving={isApproving} />}
+      {currentPage === 'HOME'      && <Home      onNavigate={onNavigate} holders={holders} pours={pours} treasury={treasury} totalSips={totalSips} onPour={onPour} isPouring={isPouring} transactionStatus={transactionStatus} transactionError={transactionError} lastWinner={lastWinner} isApproving={isApproving} />}
       {currentPage === 'ABOUT'     && <About     onNavigate={onNavigate} />}
       {currentPage === 'TREASURY'  && (
         <GuardedPage>

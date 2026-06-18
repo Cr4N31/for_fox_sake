@@ -28,7 +28,7 @@ function Hero({ onNavigate, holders = 0, treasury = 0, totalSips = 0 }) {
                         Enter the neon fox tavern. Pour your $FFS into the mystical sake bottle. <br />
                         When the bottle sips, fate decides who walks away with the treasury.
                     </h3>
-                    <span className="text-orange-600 italic">"Every sip could drain the bottle…"</span>
+                    <span className="text-orange-600 italic">"Every spill could drain the bottle…"</span>
                 </div>
 
                 <div className='flex gap-4 text-center justify-left items-center'>
@@ -84,7 +84,12 @@ function Hero({ onNavigate, holders = 0, treasury = 0, totalSips = 0 }) {
                         </li>
                     ))}
                 </ul>
-                <span className='mb-6 tracking-widest font-light text-white/70'>── Awaiting first pour. Bottle is empty. ──</span>
+                {!pour ? (
+                    <span className='mb-6 tracking-widest font-light text-white/70'>── Awaiting first pour. Bottle is empty. ──</span>
+                ) : (
+                    <span className='mb-6 tracking-widest font-light text-white/70'>── Pour has started. Awaiting sip. ──</span>
+                )}
+                
             </div>
 
             {/* FOX IMAGE CARD */}
