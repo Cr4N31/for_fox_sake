@@ -1,21 +1,5 @@
 function Footer(handleNavigate) {
 
-    const footerNav = [
-    { label: "Home", id: "HOME" },
-    { label:"About", id: "ABOUT"},
-    { label: "Treasury", id: "TREASURY" },
-    { label: "Dashboard", id: "DASHBOARD" },
-    { label: "Community", id: "COMMUNITY" },
-    ]
-    
-
-    const handleNavClick = (id) => {
-        const section = document.getElementById(id)
-        if (section) {
-            section.scrollIntoView({ behavior: "smooth" })
-        }
-    }
-
     return (
         <footer className="relative bottom-0 left-0 right-0 z-50 mt-12 border-t border-pink-400/20 bg-black/10 backdrop-blur-md shadow-[0_0_25px_rgba(168,85,247,0.2)]">
 
@@ -32,23 +16,6 @@ function Footer(handleNavigate) {
                         A neon fox tavern in the Cronos underworld. Spill. Stake. Win.
                     </p>
                 </div>
-
-                {/* NAVIGATION */}
-                <nav>
-                    <ul className="flex flex-wrap justify-center gap-6 uppercase">
-
-                        {footerNav.map((f, index) => (
-                            <li
-                                key={index}
-                                onClick={() => onNavigate(f.id)}
-                                className="text-white/60 tracking-[2px] text-xs hover:text-pink-300 transition duration-300 cursor-pointer hover:drop-shadow-[0_0_8px_rgba(244,114,182,0.9)]"
-                            >
-                                {f.label}
-                            </li>
-                        ))}
-
-                    </ul>
-                </nav>
 
                 {/* COPYRIGHT */}
                 <div className="text-center md:text-right">
