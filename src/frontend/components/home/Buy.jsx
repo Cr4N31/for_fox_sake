@@ -30,7 +30,7 @@ function Buy({ onPour, isPouring = false, isApproving = false, transactionStatus
             <div className='flex flex-col gap-4'>
                 <div className='text-cyan-300 flex items-center gap-1 uppercase'>
                     <Trophy className='w-4'/>
-                    <p className='text-xs tracking-widest font-semibold'>Last Sip</p>
+                    <p className='text-xs tracking-widest font-semibold'>Last Spill</p>
                 </div>
                 <div className='flex flex-col gap-3'>
                     <h1 className='text-6xl font-extrabold bg-fire bg-clip-text text-transparent'>
@@ -42,7 +42,7 @@ function Buy({ onPour, isPouring = false, isApproving = false, transactionStatus
                     <p className='text-white/60 text-sm'>
                         {lastWinner.winner
                             ? `${lastWinner.winner} walked away with the treasury.`
-                            : 'No sips yet - be the first to pour and start the round.'
+                            : 'No spills yet - be the first to pour and start the round.'
                         }
                     </p>
                     <button
