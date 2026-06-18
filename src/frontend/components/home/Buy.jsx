@@ -42,7 +42,7 @@ function Buy({ onPour, isPouring = false, isApproving = false, transactionStatus
                     <p className='text-white/60 text-sm'>
                         {lastWinner.winner
                             ? `${lastWinner.winner} walked away with the treasury.`
-                            : 'No spills yet - be the first to pour and start the round.'
+                            : 'Waiting for the first spill...'
                         }
                     </p>
                     <button
