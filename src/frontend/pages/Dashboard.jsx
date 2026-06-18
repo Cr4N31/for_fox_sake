@@ -15,7 +15,7 @@ function Dashboard({ balance = 0, fillPercent = 0, participants = 0, totalSips =
     .reduce((sum, p) => sum + p.amount, 0)
 
 	return (
-		<section className="p-8" data-aos="fade-up">
+		<section className="p-8" data-aos="fade-up" id="dashboard">
 			<WalletBar />
 			<HoldingChart balance={userTotalPoured} mockTokenHoldings={mockTokenHoldings} />
 		</section>
