@@ -20,7 +20,7 @@ function Footer() {
                     </h1>
 
                     <p className="text-sm text-white/45 max-w-sm leading-relaxed">
-                        A neon fox tavern in the Cronos underworld. Sip. Stake. Win.
+                        A neon fox tavern in the Cronos underworld. Spill. Stake. Win.
                     </p>
                 </div>
 
