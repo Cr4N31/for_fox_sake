@@ -1,11 +1,13 @@
-function Footer() {
+function Footer(handleNavigate) {
 
     const footerNav = [
-        { label: "About", id: "#about" },
-        { label: "Treasury", id: "#treasury" },
-        { label: "Dashboard", id: "#dashboard" },
-        { label: "Community", id: "#community" },
+    { label: "Home", id: "HOME" },
+    { label:"About", id: "ABOUT"},
+    { label: "Treasury", id: "TREASURY" },
+    { label: "Dashboard", id: "DASHBOARD" },
+    { label: "Community", id: "COMMUNITY" },
     ]
+    
 
     const handleNavClick = (id) => {
         const section = document.getElementById(id)
@@ -38,7 +40,7 @@ function Footer() {
                         {footerNav.map((f, index) => (
                             <li
                                 key={index}
-                                onClick={() => handleNavClick(f.id)}
+                                onClick={() => onNavigate(f.id)}
                                 className="text-white/60 tracking-[2px] text-xs hover:text-pink-300 transition duration-300 cursor-pointer hover:drop-shadow-[0_0_8px_rgba(244,114,182,0.9)]"
                             >
                                 {f.label}
