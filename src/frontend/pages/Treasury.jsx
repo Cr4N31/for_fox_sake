@@ -6,7 +6,7 @@ import LastWinner from '../components/treasury/LastWinner'
 
 function Treasury({ treasury = 0, holders = 0, totalSips = 0, participants = 0, pours = [], lastWinner = { winner: '', amount: 0 }, winnerHistory = [], fillPercent = 0, onPour, sipNonce = 0, isPouring = false, transactionStatus = '', transactionError = '', isApproving = false }) {
     return (
-        <section className='max-w-7xl mx-auto px-6 pb-24' data-aos="fade-up">
+        <section className='max-w-7xl mx-auto px-6 pb-24' data-aos="fade-up" id="treasury">
             <TreasuryHero />
 
             <div className='grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]'>
