@@ -1,7 +1,7 @@
 import left_img from '../../../assets/imgs/fox-hero-D8H5Gfnq.jpg'
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react'
 
-function Hero({ onNavigate, holders = 0, treasury = 0, totalSips = 0 }) {
+function Hero({ pour, onNavigate, holders = 0, treasury = 0, totalSips = 0 }) {
     const tokenData = [
         { name: `Unique Participants`, value: holders, color: "#ffffff" },
         { name: "Treasury", value: `$${treasury.toLocaleString()}`, color: "#00FFFF" },
@@ -84,7 +84,7 @@ function Hero({ onNavigate, holders = 0, treasury = 0, totalSips = 0 }) {
                         </li>
                     ))}
                 </ul>
-                {!pour ? (
+                {pour === 0 ? (
                     <span className='mb-6 tracking-widest font-light text-white/70'>── Awaiting first pour. Bottle is empty. ──</span>
                 ) : (
                     <span className='mb-6 tracking-widest font-light text-white/70'>── Pour has started. Awaiting sip. ──</span>
