@@ -1,10 +1,10 @@
 function Footer() {
 
     const footerNav = [
-        { label: "About", id: "about" },
-        { label: "Treasury", id: "treasury" },
-        { label: "Dashboard", id: "dashboard" },
-        { label: "Community", id: "community" },
+        { label: "About", id: "#about" },
+        { label: "Treasury", id: "#treasury" },
+        { label: "Dashboard", id: "#dashboard" },
+        { label: "Community", id: "#community" },
     ]
 
     const handleNavClick = (id) => {
