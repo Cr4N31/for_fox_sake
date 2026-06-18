@@ -11,7 +11,7 @@ const tavernLinks = [
 
 function Community({ stats = {}, treasury = 0, totalSips = 0, winnerHistory = [] }){
 	return (
-		<section className="max-w-7xl mx-auto mt-16 px-6 pb-24 space-y-8" data-aos="fade-up">
+		<section className="max-w-7xl mx-auto mt-16 px-6 pb-24 space-y-8" data-aos="fade-up" id="community">
             <PackHero />
             <div data-aos="fade-up">
                 <PackStatGrid
