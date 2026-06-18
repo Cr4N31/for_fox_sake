@@ -5,7 +5,7 @@ function Hero({ onNavigate, holders = 0, treasury = 0, totalSips = 0 }) {
     const tokenData = [
         { name: `Unique Participants`, value: holders, color: "#ffffff" },
         { name: "Treasury", value: `$${treasury.toLocaleString()}`, color: "#00FFFF" },
-        { name: "Sips", value: totalSips, color: '#f87e0c' }
+        { name: "Spills", value: totalSips, color: '#f87e0c' }
     ]
 
     const { open } = useAppKit()
@@ -23,7 +23,7 @@ function Hero({ onNavigate, holders = 0, treasury = 0, totalSips = 0 }) {
                     <h1 className="font-extrabold text-6xl uppercase bg-fire bg-clip-text text-transparent">
                         For Fox <br /><span className='bg-neon bg-clip-text text-transparent'>Sake</span>
                     </h1>
-                    <h2 className="tracking-widest text-2xl text-cyan-300">SIP. STAKE. WIN</h2>
+                    <h2 className="tracking-widest text-2xl text-cyan-300">SPILL. STAKE. WIN</h2>
                     <h3 className='text-white/70'>
                         Enter the neon fox tavern. Pour your $FFS into the mystical sake bottle. <br />
                         When the bottle sips, fate decides who walks away with the treasury.
