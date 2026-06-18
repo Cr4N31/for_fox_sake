@@ -1,11 +1,18 @@
 function Footer() {
 
     const footerNav = [
-        "About",
-        "Treasury",
-        "Dashboard",
-        "Community"
+        { label: "About", id: "about" },
+        { label: "Treasury", id: "treasury" },
+        { label: "Dashboard", id: "dashboard" },
+        { label: "Community", id: "community" },
     ]
+
+    const handleNavClick = (id) => {
+        const section = document.getElementById(id)
+        if (section) {
+            section.scrollIntoView({ behavior: "smooth" })
+        }
+    }
 
     return (
         <footer className="relative bottom-0 left-0 right-0 z-50 mt-12 border-t border-pink-400/20 bg-black/10 backdrop-blur-md shadow-[0_0_25px_rgba(168,85,247,0.2)]">
@@ -31,9 +38,10 @@ function Footer() {
                         {footerNav.map((f, index) => (
                             <li
                                 key={index}
+                                onClick={() => handleNavClick(f.id)}
                                 className="text-white/60 tracking-[2px] text-xs hover:text-pink-300 transition duration-300 cursor-pointer hover:drop-shadow-[0_0_8px_rgba(244,114,182,0.9)]"
                             >
-                                {f}
+                                {f.label}
                             </li>
                         ))}
 
