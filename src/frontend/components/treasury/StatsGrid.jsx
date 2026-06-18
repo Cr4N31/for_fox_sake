@@ -3,7 +3,7 @@ import { Users, History } from 'lucide-react'
 function StatsGrid({ holders = 0, totalSips = 0 }) {
     const stats = [
         { icon: <Users className='w-4 h-4 text-cyan-400' />, value: holders, label: 'Unique Participants' },
-        { icon: <History className='w-4 h-4 text-cyan-400' />, value: totalSips, label: 'Total Sips' },
+        { icon: <History className='w-4 h-4 text-cyan-400' />, value: totalSips, label: 'Total Spills' },
     ]
 
     return (
