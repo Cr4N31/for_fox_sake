@@ -25,7 +25,7 @@ function LastWinner({ winner = null, amount = 0, winners = [] }) {
                             </div>
                             <p className='text-pink-400 font-bold text-sm'>0 $FFS</p>
                             <p className='text-white/30 text-xs uppercase tracking-widest'>
-                                Awaiting first sip
+                                Awaiting first spill
                             </p>
                         </>
                     )}
